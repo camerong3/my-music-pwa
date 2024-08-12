@@ -11,30 +11,28 @@
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
+    <!-- Firebase Analytics -->
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"></script> <!-- Include this if you're using Realtime Database -->
-    <!-- Include other Firebase products as needed, for example: -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js"></script> -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"></script> -->
-    
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"></script>
+
     <script>
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
             authDomain: "my-music-pwa.firebaseapp.com",
+            databaseURL: "https://my-music-pwa.firebaseio.com",
             projectId: "my-music-pwa",
             storageBucket: "my-music-pwa.appspot.com",
             messagingSenderId: "929710123132",
-            appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
-            measurementId: "G-VVV87VMFVV"
+            appId: "1:929710123132:web:c05da47e0d6650bc3c01f9"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const analytics = firebase.analytics();
-        // If using Realtime Database
         const database = firebase.database();
     </script>
 
