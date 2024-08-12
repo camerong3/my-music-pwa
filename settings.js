@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`You have joined the listening group: ${groupID}`);
 
         // Listen for song updates from Firebase
+        console.log('Retrieved song info:', songInfo); // When retrieving from Firebase
         firebase.database().ref('groups/' + groupID + '/currentSong').on('value', (snapshot) => {
             const songInfo = snapshot.val();
             if (songInfo) {

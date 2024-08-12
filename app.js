@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
     
                     // Store the current song information in Firebase
+                    console.log('Storing song info:', songInfo); // Before storing in Firebase
                     firebase.database().ref('groups/' + groupID + '/currentSong').set(songInfo);
     
                     // Update the UI for the leader
