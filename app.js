@@ -107,6 +107,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function pollCurrentSong() {
+        const token = localStorage.getItem('spotifyAccessToken');
+        const groupID = localStorage.getItem('spotifyGroupID');
+        
+        if (token && groupID) {
+            fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.item) {
+                    const songInfo = {
+                        title: data.item.name,
+                        artist: data.item.artists.map(artist => artist.name).join(', '),
+                        albumArt: data.item.album.images[0].url
+                    };
+    
+                    // Store the current song information in Firebase
+                    firebase.database().ref('groups/' + groupID + '/currentSong').set(songInfo);
+    
+                    // Update the UI for the leader
+                    updateSongUI(songInfo);
+                }
+            })
+            .catch(err => console.error('Error fetching currently playing song:', err));
+        }
+    }
+    
+    function updateSongUI(songInfo) {
+        document.getElementById("song-title").textContent = songInfo.title;
+        document.getElementById("artist-name").textContent = songInfo.artist;
+        document.getElementById("album-art").src = songInfo.albumArt;
+        document.getElementById("album-art").style.display = 'block';
+    }
+    
+    // Poll the current song every 5 seconds (adjust as needed)
+    setInterval(pollCurrentSong, 5000);
+    
     // Register the service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

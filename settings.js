@@ -52,4 +52,52 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'index.html';
         });
     }
+    
+    // Generate a unique group ID
+    function generateGroupID() {
+        return 'group-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Handle group creation
+    const createGroupButton = document.getElementById('create-group');
+    if (createGroupButton) {
+        createGroupButton.addEventListener('click', () => {
+            const groupID = generateGroupID();
+            const groupLink = `${window.location.origin}${window.location.pathname}?group=${groupID}`;
+            alert(`Share this link to invite others to your listening group: ${groupLink}`);
+
+            // Store the group ID in Firebase
+            firebase.database().ref('groups/' + groupID).set({
+                leader: true,
+                currentSong: null
+            });
+
+            // Optionally, store the group ID in localStorage for the leader
+            localStorage.setItem('spotifyGroupID', groupID);
+        });
+    }
+
+    // Handle group member joining
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupID = urlParams.get('group');
+    if (groupID) {
+        localStorage.setItem('spotifyGroupID', groupID);
+        alert(`You have joined the listening group: ${groupID}`);
+
+        // Listen for song updates from Firebase
+        firebase.database().ref('groups/' + groupID + '/currentSong').on('value', (snapshot) => {
+            const songInfo = snapshot.val();
+            if (songInfo) {
+                updateSongUI(songInfo);
+            }
+        });
+    }
+
+    // Update the song UI
+    function updateSongUI(songInfo) {
+        document.getElementById("song-title").textContent = songInfo.title;
+        document.getElementById("artist-name").textContent = songInfo.artist;
+        document.getElementById("album-art").src = songInfo.albumArt;
+        document.getElementById("album-art").style.display = 'block';
+    }
 });
