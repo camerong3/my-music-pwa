@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         spotifyStatusDot.style.backgroundColor = 'red';
         if (!token || now >= tokenExpiration) {
             alert('Spotify session expired. Please re-authenticate.');
-            window.location.href = 'settings.html'; // Redirect to re-authenticate
+            //window.location.href = 'settings.html'; // Redirect to re-authenticate
         }
     }
 
