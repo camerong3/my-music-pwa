@@ -129,3 +129,18 @@ button:hover {
 #vote-keep:hover, #vote-skip:hover {
     background-color: #0056b3;
 }
+
+#logout-spotify {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #ff4d4d; /* Red background color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#logout-spotify:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}

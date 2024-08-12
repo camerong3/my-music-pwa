@@ -1,9 +1,9 @@
-// Spotify client details
-const clientId = '3d83a8c45b8848329a38d3393f5d4b00';  // Replace with your actual Spotify Client ID
-const redirectUri = 'https://camerong3.github.io/my-music-pwa/callback.html';  // Replace with your actual redirect URI
-const scopes = 'user-read-private user-read-email user-read-playback-state';  // Scopes you want to request from the user
-
 document.addEventListener('DOMContentLoaded', () => {
+    // Spotify client details
+    const clientId = '3d83a8c45b8848329a38d3393f5d4b00';  // Replace with your actual Spotify Client ID
+    const redirectUri = 'https://camerong3.github.io/my-music-pwa/callback.html';  // Replace with your actual redirect URI
+    const scopes = 'user-read-private user-read-email user-read-playback-state';  // Scopes you want to request from the user
+
     // Spotify login button
     const spotifyLoginButton = document.getElementById('spotify-login');
     if (spotifyLoginButton) {
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('spotifyTokenExpiration');
 
             // Optionally redirect to Spotify's logout page (this won't log out from Spotify globally, just your app)
-            window.location.href = 'https://www.spotify.com/logout/';
+            window.location.href = 'https://accounts.spotify.com/logout';
 
             // Optionally redirect to the settings page or show a message
             alert('You have been logged out of Spotify.');
