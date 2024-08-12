@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Ensure Firebase is initialized and available
+    if (!firebase.apps.length) {
+        console.error('Firebase not initialized');
+        return;
+    }
+    
     // Spotify client details
     const clientId = '3d83a8c45b8848329a38d3393f5d4b00';  // Replace with your actual Spotify Client ID
     const redirectUri = 'https://camerong3.github.io/my-music-pwa/callback.html';  // Replace with your actual redirect URI
