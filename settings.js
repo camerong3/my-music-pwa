@@ -30,6 +30,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Fetch and display user info if the token is available
+    const token = localStorage.getItem('spotifyAccessToken');
+    if (token) {
+        fetch('https://api.spotify.com/v1/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.body.insertAdjacentHTML('beforeend', `<p>Logged in as: ${data.display_name}</p>`);
+        })
+        .catch(err => console.error(err));
+    }
+
     // Back to Home button
     const backToHomeButton = document.getElementById('back-to-home');
     if (backToHomeButton) {
