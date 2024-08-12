@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Callback</title>
+</head>
+<body>
+    <script>
+        function getHashParams() {
+            const hash = window.location.hash.substring(1);
+            return hash.split('&').reduce((result, item) => {
+                const parts = item.split('=');
+                result[parts[0]] = decodeURIComponent(parts[1]);
+                return result;
+            }, {});
+        }
+
+        const params = getHashParams();
+        const accessToken = params.access_token;
+        const expiresIn = params.expires_in; // Expiration time in seconds
+
+        if (accessToken) {
+            const expirationTime = new Date().getTime() + expiresIn * 1000;
+            localStorage.setItem('spotifyAccessToken', accessToken);
+            localStorage.setItem('spotifyTokenExpiration', expirationTime);
+            alert('Spotify account linked successfully!');
+            window.location.href = 'settings.html';
+        } else {
+            alert('Failed to link Spotify account.');
+            window.location.href = 'settings.html';
+        }
+    </script>
+</body>
+</html>
