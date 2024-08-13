@@ -9,6 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupIDInput = document.getElementById('group-id-input');
     const joinButton = document.createElement('button');
 
+    // Generate a unique group ID
+    function generateGroupID() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let groupID = '';
+        for (let i = 0; i < 6; i++) {
+            groupID += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return groupID;
+    }
+
     // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
@@ -53,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle group creation
         createGroupButton.addEventListener('click', () => {
-            const newGroupID = 'group-' + Math.random().toString(36).substr(2, 9);
+            const newGroupID = generateGroupID();
             localStorage.setItem('spotifyGroupID', newGroupID);
             localStorage.setItem('isGroupLeader', 'true'); // Mark this user as the group leader
 
@@ -62,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
-            //alert(`Group created with ID: ${newGroupID}`);
+            alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
 
@@ -81,11 +91,21 @@ document.addEventListener('DOMContentLoaded', () => {
         joinButton.addEventListener('click', () => {
             const enteredGroupID = groupIDInput.value.trim();
             if (enteredGroupID) {
-                // Override and save the new group ID in localStorage
-                localStorage.setItem('spotifyGroupID', enteredGroupID);
-                localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
-                //alert(`Joined group with ID: ${enteredGroupID}`);
-                window.location.reload(); // Reload the page to update UI
+                // Check if the group exists in Firebase
+                firebase.database().ref('groups/' + enteredGroupID).once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        // Group exists, join the group
+                        localStorage.setItem('spotifyGroupID', enteredGroupID);
+                        localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
+                        alert(`Joined group with ID: ${enteredGroupID}`);
+                        window.location.reload(); // Reload the page to update UI
+                    } else {
+                        // Group does not exist, show an error
+                        alert('Group ID does not exist. Please check the ID and try again.');
+                    }
+                }).catch(err => {
+                    console.error('Error checking group ID:', err);
+                });
             }
         });
     }
@@ -95,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLeader) {
             // If the user is the group leader, remove the group from Firebase
             firebase.database().ref('groups/' + groupID).remove().then(() => {
-                //alert('Group session ended.');
+                alert('Group session ended.');
             }).catch(err => {
                 console.error('Error ending group session:', err);
             });
