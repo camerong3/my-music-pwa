@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
             window.location.href = authUrl;
         });
+    } else {
+        console.error('Spotify login button not found');
     }
 
     // Spotify logout button
@@ -34,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('You have been logged out of Spotify.');
             window.location.href = 'settings.html';
         });
+    } else {
+        console.error('Spotify logout button not found');
     }
 
     // Fetch and display user info if the token is available
@@ -48,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             document.body.insertAdjacentHTML('beforeend', `<p>Logged in as: ${data.display_name}</p>`);
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error('Error fetching Spotify user info:', err));
+    } else {
+        console.warn('No Spotify access token found');
     }
 
     // Back to Home button
@@ -57,5 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backToHomeButton.addEventListener('click', () => {
             window.location.href = 'index.html';
         });
+    } else {
+        console.error('Back to Home button not found');
     }
 });
