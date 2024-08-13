@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("song-title").textContent = currentSong;
 
     let hasVoted = false;  // Local flag to track if the user has already voted for the current song
-    let currentSongTitle = null; // Variable to track the current song title
+    let currentSongTitle = ""; // Variable to track the current song title
 
     // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
@@ -254,35 +254,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update the vote status and check for song change
     function updateVoteStatus() {
         const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
-        const songRef = firebase.database().ref('groups/' + groupID + '/currentSong/title');
-        
-        songRef.once('value').then(snapshot => {
-            const newSongTitle = snapshot.val(); // Get the current song title
-            if (newSongTitle !== currentSongTitle) {
-                // Song has changed, reset votes and flag
-                currentSongTitle = newSongTitle;
-                hasVoted = false; // Reset the voting flag for the new song
-                resetVotes(); // Reset votes in Firebase
-            }
             
-            votesRef.once('value').then(snapshot => {
-                const votes = snapshot.val() || { keep: 0, skip: 0 }; // Default to 0 if no votes yet
-                const voteStatus = document.getElementById("vote-status");
+        votesRef.once('value').then(snapshot => {
+            const votes = snapshot.val() || { keep: 0, skip: 0 }; // Default to 0 if no votes yet
+            const voteStatus = document.getElementById("vote-status");
 
-                voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
+            voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
 
-                if (votes.skip > totalListeners / 2) {
-                    voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
-                    setTimeout(() => {
-                        // Logic to move to the next song
-                        moveToNextSong();
-                    }, 2000);
-                }
-            }).catch(err => {
-                console.error('Error fetching votes from Firebase:', err);
-            });
+            if (votes.skip > totalListeners / 2) {
+                voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
+                setTimeout(() => {
+                    // Logic to move to the next song
+                    moveToNextSong();
+                }, 2000);
+            }
         }).catch(err => {
-            console.error('Error fetching current song from Firebase:', err);
+            console.error('Error fetching votes from Firebase:', err);
         });
     }
 
@@ -311,7 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function pollCurrentSong() {
         const token = localStorage.getItem('spotifyAccessToken');
         const groupID = localStorage.getItem('spotifyGroupID');
-        
+        let previousSongTitle = localStorage.getItem('currentSongTitle') || null; // Get the previously stored song title
+    
         if (token && groupID) {
             fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                 headers: {
@@ -326,6 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         artist: data.item.artists.map(artist => artist.name).join(', '),
                         albumArt: data.item.album.images[0].url
                     };
+    
+                    // Check if the song title has changed
+                    if (songInfo.title !== previousSongTitle) {
+                        // Song has changed, reset votes and the hasVoted flag
+                        localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
+                        hasVoted = false; // Reset the voting flag for the new song
+                        localStorage.setItem('hasVoted', JSON.stringify(false)); // Update local storage
+                        resetVotes(); // Reset votes in Firebase
+                    }
     
                     // Store the current song information in Firebase
                     console.log('Storing song info:', songInfo); // Before storing in Firebase
