@@ -302,6 +302,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => {
             console.error('Error resetting votes:', err);
         });
+
+        hasVoted = false; // Reset the voting flag for the new song
+        localStorage.setItem('hasVoted', 'false'); // Update local storage
+        window.location.reload(); // Reload the page to update UI
     }
 
     // Function to move to the next song (for group leader only)
@@ -328,10 +332,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(err => {
                 console.error('Error skipping to the next song:', err);
             });
-            // Song has changed, reset votes and the hasVoted flag
+            // Song skip requested, reset votes and the hasVoted flag
             localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
-            hasVoted = false; // Reset the voting flag for the new song
-            localStorage.setItem('hasVoted', hasVoted); // Update local storage
             resetVotes(); // Reset votes in Firebase
         } else {
             console.log('Not the group leader or Spotify token is missing.');
@@ -374,8 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (songInfo.title !== previousSongTitle) {
                         // Song has changed, reset votes and the hasVoted flag
                         localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
-                        hasVoted = false; // Reset the voting flag for the new song
-                        localStorage.setItem('hasVoted', hasVoted); // Update local storage
                         resetVotes(); // Reset votes in Firebase
                     }
     
