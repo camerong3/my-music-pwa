@@ -85,6 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
+            // Increment listener count in Firebase when user joins
+            const groupRef = firebase.database().ref('groups/' + groupID);
+            groupRef.child('listenerCount').transaction(currentCount => {
+                return (currentCount || 0) + 1;
+            });
+
             //alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
@@ -110,6 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Group exists, join the group
                         localStorage.setItem('spotifyGroupID', enteredGroupID);
                         localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
+
+                        // Increment listener count in Firebase when user joins
+                        const groupRef = firebase.database().ref('groups/' + groupID);
+                        groupRef.child('listenerCount').transaction(currentCount => {
+                            return (currentCount || 0) + 1;
+                        });
+
                         //alert(`Joined group with ID: ${enteredGroupID}`);
                         window.location.reload(); // Reload the page to update UI
                     } else {
@@ -297,7 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('spotifyAccessToken');
         const groupID = localStorage.getItem('spotifyGroupID');
         let previousSongTitle = localStorage.getItem('currentSongTitle') || null; // Get the previously stored song title
-    
+        
+        // Fetch listener count from Firebase
+        groupRef.child('listenerCount').on('value', snapshot => {
+            totalListeners = snapshot.val() || 0;
+            console.log('Total listeners updated:', totalListeners);
+        });
+
         if (token && groupID) {
             fetch('https://api.spotify.com/v1/me/player/currently-playing', {
                 headers: {
