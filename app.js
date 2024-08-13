@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaveGroupButton = document.getElementById('leave-group');
     const groupIDInput = document.getElementById('group-id-input');
     const joinButton = document.createElement('button');
+    let currentSongRef = null;
 
     // Generate a unique group ID
     function generateGroupID() {
@@ -46,6 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('song-title').textContent = currentSong;
         document.getElementById('artist-name').textContent = '';
         document.getElementById('album-art').style.display = 'none';
+
+        // Detach any existing Firebase listener to avoid duplication
+        if (currentSongRef) {
+            currentSongRef.off();
+            currentSongRef = null;
+        }
     }
 
     function updateUIForGroupActive(groupID, isLeader) {
@@ -66,8 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         leaveGroupButton.textContent = isLeader ? 'End Group Session' : 'Leave Group';
 
-        // Set up Firebase listener for current song updates
-        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        // Detach any existing Firebase listener before attaching a new one
+        if (currentSongRef) {
+            currentSongRef.off();
+        }
+        currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 if (!isLeader) {
@@ -140,26 +150,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle leaving the group or ending the group session
     leaveGroupButton.addEventListener('click', () => {
+        leaveGroupButton.disabled = true; // Disable the button to prevent multiple clicks
+
         if (isLeader) {
             if (confirm('Are you sure you want to end the group session? This cannot be undone.')) {
                 firebase.database().ref('groups/' + groupID).remove().then(() => {
                     console.log('Group session ended.');
-                    localStorage.removeItem('spotifyGroupID');
-                    localStorage.removeItem('isGroupLeader');
-                    setupInitialUI();
+                    resetGroupState();
                 }).catch(err => {
                     console.error('Error ending group session:', err);
+                    leaveGroupButton.disabled = false; // Re-enable the button on error
                 });
+            } else {
+                leaveGroupButton.disabled = false; // Re-enable the button if the user cancels
             }
         } else {
             if (confirm('Are you sure you want to leave the group?')) {
                 alert('You have left the group.');
-                localStorage.removeItem('spotifyGroupID');
-                localStorage.removeItem('isGroupLeader');
-                setupInitialUI();
+                resetGroupState();
+            } else {
+                leaveGroupButton.disabled = false; // Re-enable the button if the user cancels
             }
         }
     });
+
+    function resetGroupState() {
+        localStorage.removeItem('spotifyGroupID');
+        localStorage.removeItem('isGroupLeader');
+        setupInitialUI();
+    }
 
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
