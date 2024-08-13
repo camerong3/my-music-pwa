@@ -44,6 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                // The group no longer exists, automatically leave the group
+                alert('The group session has ended. You will be removed from the group.');
+                localStorage.removeItem('spotifyGroupID');
+                localStorage.removeItem('isGroupLeader');
+                window.location.reload(); // Reload the page to update UI
+                return;
+            }
+
             const songInfo = snapshot.val();
             if (songInfo) {
                 document.getElementById('song-title').textContent = songInfo.title;
@@ -72,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
-            //alert(`Group created with ID: ${newGroupID}`);
+            alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
 
@@ -120,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error ending group session:', err);
             });
         } else {
-            //alert('You have left the group.');
+            alert('You have left the group.');
         }
         // Clear the group data from localStorage
         localStorage.removeItem('spotifyGroupID');
