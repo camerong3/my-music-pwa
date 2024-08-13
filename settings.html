@@ -24,28 +24,23 @@
     </div>
 
     <!-- Firebase initialization and custom scripts -->
-    <script>
-        // Ensure Firebase is initialized only once
-        if (!window.firebaseInitialized) {
-            window.firebaseInitialized = true;
+    <script>    
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
+            authDomain: "my-music-pwa.firebaseapp.com",
+            databaseURL: "https://my-music-pwa-default-rtdb.firebaseio.com",
+            projectId: "my-music-pwa",
+            storageBucket: "my-music-pwa.appspot.com",
+            messagingSenderId: "929710123132",
+            appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
+            measurementId: "G-VVV87VMFVV"
+        };
 
-            // Your Firebase configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
-                authDomain: "my-music-pwa.firebaseapp.com",
-                databaseURL: "https://my-music-pwa-default-rtdb.firebaseio.com",
-                projectId: "my-music-pwa",
-                storageBucket: "my-music-pwa.appspot.com",
-                messagingSenderId: "929710123132",
-                appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
-                measurementId: "G-VVV87VMFVV"
-            };
-
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            firebase.analytics();
-            const database = firebase.database();
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        const database = firebase.database();
     </script>
 
     <!-- Custom Scripts -->
