@@ -44,18 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
-            if (!isGroupInitialized) {
-                isGroupInitialized = true;
-                console.log('Group has been initialized successfully.');
-            }
             if (!snapshot.exists()) {
-                if (isGroupInitialized) {
-                    // The group no longer exists, automatically leave the group
-                    alert('The group session has ended. You will be removed from the group.');
-                    localStorage.removeItem('spotifyGroupID');
-                    localStorage.removeItem('isGroupLeader');
-                    window.location.reload(); // Reload the page to update UI
-                }
+                // The group no longer exists, automatically leave the group
+                alert('The group session has ended. You will be removed from the group.');
+                localStorage.removeItem('spotifyGroupID');
+                localStorage.removeItem('isGroupLeader');
+                window.location.reload(); // Reload the page to update UI
                 return;
             }
 
