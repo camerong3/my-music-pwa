@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("song-title").textContent = currentSong;
 
     let hasVoted = false;  // Local flag to track if the user has already voted for the current song
-    let currentSongID = null; // Variable to track the current song ID
+    let currentSongTitle = null; // Variable to track the current song title
 
     // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
@@ -254,13 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update the vote status and check for song change
     function updateVoteStatus() {
         const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
-        const songRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        const songRef = firebase.database().ref('groups/' + groupID + '/currentSong/title');
         
         songRef.once('value').then(snapshot => {
-            const newSongID = snapshot.val().id; // Assuming each song has a unique ID
-            if (newSongID !== currentSongID) {
+            const newSongTitle = snapshot.val(); // Get the current song title
+            if (newSongTitle !== currentSongTitle) {
                 // Song has changed, reset votes and flag
-                currentSongID = newSongID;
+                currentSongTitle = newSongTitle;
                 hasVoted = false; // Reset the voting flag for the new song
                 resetVotes(); // Reset votes in Firebase
             }
