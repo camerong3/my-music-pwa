@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hasVoted = false; // Reset the voting flag for the new song
-        localStorage.setInterval('hasVoted', hasVoted); // Update local storage
+        localStorage.setItem('hasVoted', hasVoted); // Update local storage
     }
 
     // Function to move to the next song (for group leader only)
