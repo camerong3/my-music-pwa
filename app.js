@@ -54,12 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Fetch listener count from Firebase
-        groupRef.child('listenerCount').on('value', snapshot => {
-            totalListeners = snapshot.val() || 0;
-            console.log('Total listeners updated:', totalListeners);
-        });
-
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
@@ -91,12 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
-            // Increment listener count in Firebase when user creates group
-            const groupRef = firebase.database().ref('groups/' + groupID);
-            groupRef.child('listenerCount').transaction(currentCount => {
-                return (currentCount || 0) + 1;
-            });
-
             //alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
@@ -123,13 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('spotifyGroupID', enteredGroupID);
                         localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
                         //alert(`Joined group with ID: ${enteredGroupID}`);
-
-                        // Increment listener count in Firebase when user joins
-                        const groupRef = firebase.database().ref('groups/' + groupID);
-                        groupRef.child('listenerCount').transaction(currentCount => {
-                            return (currentCount || 0) + 1;
-                        });
-
                         window.location.reload(); // Reload the page to update UI
                     } else {
                         // Group does not exist, show an error
@@ -142,27 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fetch listener count from Firebase
-    groupRef.child('listenerCount').on('value', snapshot => {
-        totalListeners = snapshot.val() || 0;
-        console.log('Total listeners updated:', totalListeners);
-    });
-
     // Handle leaving the group or ending the group session
     leaveGroupButton.addEventListener('click', () => {
         if (isLeader) {
             // If the user is the group leader, remove the group from Firebase
             firebase.database().ref('groups/' + groupID).remove().then(() => {
-                // Group session ended
+                //alert('Group session ended.');
             }).catch(err => {
                 console.error('Error ending group session:', err);
             });
         } else {
-            // Decrement listener count when user leaves
-            const groupRef = firebase.database().ref('groups/' + groupID);
-            groupRef.child('listenerCount').transaction(currentCount => {
-                return (currentCount || 0) - 1;
-            });
             alert('You have left the group.');
         }
         // Clear the group data from localStorage
