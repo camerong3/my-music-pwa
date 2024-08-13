@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSongRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 // The group no longer exists, automatically leave the group
-                if (isLeader != 'true') {
+                if (isLeader !== 'true') {
                     alert('The group session has ended. You will be removed from the group.');
                 }
                 localStorage.removeItem('spotifyGroupID');
