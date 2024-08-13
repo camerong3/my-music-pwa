@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
-    const isLeader = localStorage.getItem('isGroupLeader') === 'true';
+    Boolean isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
     if (groupID) {
         // A group is active, show the leave/end button only
@@ -44,15 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
-            if (!snapshot.exists() && isLeader) {
+            if (!snapshot.exists()) {
                 // The group no longer exists, automatically leave the group
-                localStorage.removeItem('spotifyGroupID');
-                localStorage.removeItem('isGroupLeader');
-                window.location.reload(); // Reload the page to update UI
-                return;
-            } else if (!snapshot.exists() && !isLeader) {
-                // The group no longer exists, automatically leave the group
-                alert('The group session has ended. You will be removed from the group.');
+                if (!isLeader) {
+                    alert('The group session has ended. You will be removed from the group.');
+                }
                 localStorage.removeItem('spotifyGroupID');
                 localStorage.removeItem('isGroupLeader');
                 window.location.reload(); // Reload the page to update UI
