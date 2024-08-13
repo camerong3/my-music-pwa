@@ -24,109 +24,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
     if (groupID) {
-        console.log('Existing group detected:', groupID);
-        updateUIForGroupActive(groupID, isLeader);
-    } else {
-        console.log('No existing group detected. Setting up initial UI.');
-        setupInitialUI();
-    }
-
-    // Handle group creation
-    createGroupButton.addEventListener('click', () => {
-        const newGroupID = generateGroupID();
-        console.log('Generated new group ID:', newGroupID);
-
-        localStorage.setItem('spotifyGroupID', newGroupID);
-        localStorage.setItem('isGroupLeader', 'true'); // Mark this user as the group leader
-
-        firebase.database().ref('groups/' + newGroupID).set({
-            leader: true,
-            currentSong: null
-        }).then(() => {
-            console.log('Group successfully created in Firebase.');
-            updateUIForGroupActive(newGroupID, true);
-        }).catch(err => {
-            console.error('Failed to create group in Firebase:', err);
-            alert('There was an issue creating the group in Firebase. Please try again.');
-        });
-    });
-
-    // Handle showing the group ID input and join button
-    joinGroupButton.addEventListener('click', () => {
-        joinGroupButton.style.display = 'none';
-        groupIDInput.style.display = 'block';
-
-        joinButton.textContent = 'Join';
-        joinButton.style.marginLeft = '10px';
-        document.getElementById('group-buttons').appendChild(joinButton);
-    });
-
-    // Handle joining a group when the "Join" button is pressed
-    joinButton.addEventListener('click', () => {
-        const enteredGroupID = groupIDInput.value.trim();
-        console.log('Attempting to join group with ID:', enteredGroupID);
-
-        if (enteredGroupID) {
-            firebase.database().ref('groups/' + enteredGroupID).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    console.log('Group exists in Firebase. Joining group...');
-                    localStorage.setItem('spotifyGroupID', enteredGroupID);
-                    localStorage.removeItem('isGroupLeader');
-                    updateUIForGroupActive(enteredGroupID, false);
-                } else {
-                    alert('Group ID does not exist. Please check the ID and try again.');
-                }
-            }).catch(err => {
-                console.error('Error checking group ID:', err);
-            });
-        }
-    });
-
-    // Handle leaving the group or ending the group session
-    leaveGroupButton.addEventListener('click', () => {
-        if (isLeader) {
-            firebase.database().ref('groups/' + groupID).remove().then(() => {
-                console.log('Group session ended.');
-            }).catch(err => {
-                console.error('Error ending group session:', err);
-            });
-        } else {
-            alert('You have left the group.');
-        }
-
-        localStorage.removeItem('spotifyGroupID');
-        localStorage.removeItem('isGroupLeader');
-        setupInitialUI();
-    });
-
-    // Function to update the UI when a group is active
-    function updateUIForGroupActive(groupID, isLeader) {
-        console.log('Updating UI for active group:', groupID);
-
+        // A group is active, show the leave/end button only
         createGroupButton.style.display = 'none';
         joinGroupButton.style.display = 'none';
         groupIDInput.style.display = 'none';
         leaveGroupButton.style.display = 'block';
 
-        let groupIDElement = document.getElementById('current-group-id');
-        if (!groupIDElement) {
-            groupIDElement = document.createElement('p');
-            groupIDElement.id = 'current-group-id';
-            document.getElementById('app').appendChild(groupIDElement);
-        }
+        // Display the current group ID on the home page
+        const groupIDElement = document.createElement('p');
+        groupIDElement.id = 'current-group-id';
         groupIDElement.textContent = `Current Group ID: ${groupID}`;
+        document.getElementById('app').appendChild(groupIDElement);
 
-        leaveGroupButton.textContent = isLeader ? 'End Group Session' : 'Leave Group';
+        // Update button text if the user is the leader
+        if (isLeader) {
+            leaveGroupButton.textContent = 'End Group Session';
+        }
 
+        // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
-                if (!isLeader) {
-                    alert('The group session has ended. You will be removed from the group.');
-                }
+                // The group no longer exists, automatically leave the group
+                alert('The group session has ended. You will be removed from the group.');
                 localStorage.removeItem('spotifyGroupID');
                 localStorage.removeItem('isGroupLeader');
-                setupInitialUI();
+                window.location.reload(); // Reload the page to update UI
                 return;
             }
 
@@ -140,26 +63,79 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('No song is currently playing.');
             }
         });
-    }
-
-    // Function to set up the initial UI state
-    function setupInitialUI() {
-        console.log('Setting up initial UI.');
-
+    } else {
+        // No group is active, show create and join buttons
         createGroupButton.style.display = 'block';
         joinGroupButton.style.display = 'block';
         leaveGroupButton.style.display = 'none';
         groupIDInput.style.display = 'none';
 
-        const groupIDElement = document.getElementById('current-group-id');
-        if (groupIDElement) {
-            groupIDElement.remove();
-        }
+        // Handle group creation
+        createGroupButton.addEventListener('click', () => {
+            const newGroupID = generateGroupID();
+            localStorage.setItem('spotifyGroupID', newGroupID);
+            localStorage.setItem('isGroupLeader', 'true'); // Mark this user as the group leader
 
-        document.getElementById('song-title').textContent = currentSong;
-        document.getElementById('artist-name').textContent = '';
-        document.getElementById('album-art').style.display = 'none';
+            firebase.database().ref('groups/' + newGroupID).set({
+                leader: true,
+                currentSong: null
+            });
+
+            //alert(`Group created with ID: ${newGroupID}`);
+            window.location.reload(); // Reload the page to update UI
+        });
+
+        // Handle showing the group ID input and join button
+        joinGroupButton.addEventListener('click', () => {
+            joinGroupButton.style.display = 'none';
+            groupIDInput.style.display = 'block';
+
+            // Configure and display the new "Join" button
+            joinButton.textContent = 'Join';
+            joinButton.style.marginLeft = '10px';
+            document.getElementById('group-buttons').appendChild(joinButton);
+        });
+
+        // Handle joining a group when the "Join" button is pressed
+        joinButton.addEventListener('click', () => {
+            const enteredGroupID = groupIDInput.value.trim();
+            if (enteredGroupID) {
+                // Check if the group exists in Firebase
+                firebase.database().ref('groups/' + enteredGroupID).once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        // Group exists, join the group
+                        localStorage.setItem('spotifyGroupID', enteredGroupID);
+                        localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
+                        //alert(`Joined group with ID: ${enteredGroupID}`);
+                        window.location.reload(); // Reload the page to update UI
+                    } else {
+                        // Group does not exist, show an error
+                        alert('Group ID does not exist. Please check the ID and try again.');
+                    }
+                }).catch(err => {
+                    console.error('Error checking group ID:', err);
+                });
+            }
+        });
     }
+
+    // Handle leaving the group or ending the group session
+    leaveGroupButton.addEventListener('click', () => {
+        if (isLeader) {
+            // If the user is the group leader, remove the group from Firebase
+            firebase.database().ref('groups/' + groupID).remove().then(() => {
+                //alert('Group session ended.');
+            }).catch(err => {
+                console.error('Error ending group session:', err);
+            });
+        } else {
+            alert('You have left the group.');
+        }
+        // Clear the group data from localStorage
+        localStorage.removeItem('spotifyGroupID');
+        localStorage.removeItem('isGroupLeader');
+        window.location.reload(); // Reload the page to update UI
+    });
 
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
@@ -175,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateVoteStatus();
     });
 
+    // Ensure the settings button exists before adding an event listener
     const settingsButton = document.getElementById('settings-button');
     if (settingsButton) {
         settingsButton.addEventListener('click', () => {
@@ -182,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Spotify status indicator
     const spotifyStatusDot = document.getElementById('spotify-status-dot');
     const albumArt = document.getElementById('album-art');
     const songTitle = document.getElementById('song-title');
@@ -191,8 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date().getTime();
 
     if (spotifyStatusDot && token && tokenExpiration && now < tokenExpiration) {
+        // Set the indicator to green (linked)
         spotifyStatusDot.style.backgroundColor = 'green';
 
+        // Fetch the currently playing song from Spotify
         fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -203,23 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            console.log('Spotify API response data:', data);
+            console.log('Spotify API response data:', data); // Log the entire data object
             if (data && data.item) {
                 currentSong = data.item.name;
                 songTitle.textContent = currentSong;
 
+                // Display the artist name(s)
                 if (data.item.artists && data.item.artists.length > 0) {
                     artistName.textContent = data.item.artists.map(artist => artist.name).join(', ');
                 } else {
                     artistName.textContent = "Unknown Artist";
                 }
 
+                // Display the album art
                 if (data.item.album && data.item.album.images && data.item.album.images.length > 0) {
-                    const albumImageUrl = data.item.album.images[0].url;
+                    const albumImageUrl = data.item.album.images[0].url; // Usually the first image is the largest
                     albumArt.src = albumImageUrl;
-                    albumArt.style.display = 'block';
+                    albumArt.style.display = 'block'; // Show the image
                 } else {
-                    albumArt.style.display = 'none';
+                    albumArt.style.display = 'none'; // Hide the image if no album art is available
                 }
             } else {
                 songTitle.textContent = "No song currently playing";
@@ -234,9 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
             albumArt.style.display = 'none';
         });
     } else if (spotifyStatusDot) {
+        // Set the indicator to red (not linked)
         spotifyStatusDot.style.backgroundColor = 'red';
     }
 
+    // Function to update the vote status
     function updateVoteStatus() {
         const voteStatus = document.getElementById("vote-status");
         voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
@@ -248,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 votes = { keep: 0, skip: 0 };
                 songTitle.textContent = currentSong;
                 artistName.textContent = "";
-                albumArt.style.display = 'none';
+                albumArt.style.display = 'none'; // Hide album art when song changes
             }, 2000);
         }
     }
@@ -271,8 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         artist: data.item.artists.map(artist => artist.name).join(', '),
                         albumArt: data.item.album.images[0].url
                     };
-
+    
+                    // Store the current song information in Firebase
+                    console.log('Storing song info:', songInfo); // Before storing in Firebase
                     firebase.database().ref('groups/' + groupID + '/currentSong').set(songInfo);
+    
+                    // Update the UI for the leader
                     updateSongUI(songInfo);
                 }
             })
@@ -287,8 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("album-art").style.display = 'block';
     }
     
+    // Poll the current song every 5 seconds (adjust as needed)
     setInterval(pollCurrentSong, 5000);
     
+    // Register the service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/my-music-pwa/sw.js').then(registration => {
