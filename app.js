@@ -78,24 +78,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle leaving the group or ending the group session
     leaveGroupButton.addEventListener('click', () => {
+        // Prevent double clicks or unintentional triggering
+        leaveGroupButton.disabled = true;
+
         if (isLeader) {
             if (confirm('Are you sure you want to end the group session? This cannot be undone.')) {
                 firebase.database().ref('groups/' + groupID).remove().then(() => {
                     console.log('Group session ended.');
+                    resetGroupState();
                 }).catch(err => {
                     console.error('Error ending group session:', err);
+                    leaveGroupButton.disabled = false; // Re-enable the button on error
                 });
+            } else {
+                leaveGroupButton.disabled = false; // Re-enable the button if the user cancels
             }
         } else {
             if (confirm('Are you sure you want to leave the group?')) {
                 alert('You have left the group.');
+                resetGroupState();
+            } else {
+                leaveGroupButton.disabled = false; // Re-enable the button if the user cancels
             }
         }
+    });
 
+    function resetGroupState() {
         localStorage.removeItem('spotifyGroupID');
         localStorage.removeItem('isGroupLeader');
         setupInitialUI();
-    });
+    }
 
     // Function to update the UI when a group is active
     function updateUIForGroupActive(groupID, isLeader) {
@@ -122,9 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isLeader) {
                     alert('The group session has ended. You will be removed from the group.');
                 }
-                localStorage.removeItem('spotifyGroupID');
-                localStorage.removeItem('isGroupLeader');
-                setupInitialUI();
+                resetGroupState();
                 return;
             }
 
