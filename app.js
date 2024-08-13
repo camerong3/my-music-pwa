@@ -146,23 +146,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
 
+    // Local flag to track if the user has already voted for the current song
+    let hasVoted = false;
+
     // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
-        vote('keep');
+        if (!hasVoted) {
+            castVote('keep');
+            hasVoted = true; // Set the flag to true after voting
+        } else {
+            alert('You have already voted for this song.');
+        }
     });
 
     document.getElementById("vote-skip").addEventListener("click", () => {
-        vote('skip');
+        if (!hasVoted) {
+            castVote('skip');
+            hasVoted = true; // Set the flag to true after voting
+        } else {
+            alert('You have already voted for this song.');
+        }
     });
 
     // Function to handle voting
-    function vote(action) {
+    function castVote(action) {
         const voteRef = firebase.database().ref('groups/' + groupID + '/votes/' + action);
         
         voteRef.transaction(currentVotes => {
             return (currentVotes || 0) + 1;
         }).then(() => {
             console.log(`Voted to ${action}.`);
+            updateVoteStatus(); // Update the vote status after voting
         }).catch(err => {
             console.error(`Error voting to ${action}:`, err);
         });
@@ -250,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
                 setTimeout(() => {
                     currentSong = "Next Sample Song";
-                    votesRef.set({ keep: 0, skip: 0 }); // Reset votes in Firebase
+                    resetVotesAndFlag(); // Reset votes and local flag when song changes
                     document.getElementById("song-title").textContent = currentSong;
                     document.getElementById("artist-name").textContent = "";
                     document.getElementById("album-art").style.display = 'none'; // Hide album art when song changes
@@ -258,6 +272,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }).catch(err => {
             console.error('Error fetching votes from Firebase:', err);
+        });
+    }
+
+    // Function to reset votes in Firebase and the local voting flag
+    function resetVotesAndFlag() {
+        const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
+        
+        votesRef.set({ keep: 0, skip: 0 }).then(() => {
+            console.log('Votes reset successfully.');
+            hasVoted = false; // Reset the local flag so the user can vote on the next song
+        }).catch(err => {
+            console.error('Error resetting votes:', err);
         });
     }
 
