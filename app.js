@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
             leaveGroupButton.textContent = 'End Group Session';
         }
         
-        // Set up Firebase listener for current song updates
-        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
-        currentSongRef.on('value', (snapshot) => {
+        // Break from group if leader ends session
+        const currentGroup = firebase.database().ref('groups/' + groupID);
+        currentGroup.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 // The group no longer exists, automatically leave the group
                 alert('The group session has ended. You will be removed from the group.');
@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.reload(); // Reload the page to update UI
                 return;
             }
+        });
 
+        // Set up Firebase listener for current song updates
+        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        currentSongRef.on('value', (snapshot) => {
             const songInfo = snapshot.val();
             if (songInfo) {
                 document.getElementById('song-title').textContent = songInfo.title;
