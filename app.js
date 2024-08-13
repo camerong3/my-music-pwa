@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Increment listener count in Firebase when user joins
-            const groupRef = firebase.database().ref('groups/' + newGroupID);
-            groupRef.child('listenerCount').transaction(currentCount => {
+            const groupRef = firebase.database().ref('groups/' + newGroupID + '/listenerCount');
+            groupRef.transaction(currentCount => {
                 return (currentCount || 0) + 1;
             });
 
@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
 
                         // Increment listener count in Firebase when user joins
-                        const groupRef = firebase.database().ref('groups/' + enteredGroupID);
-                        groupRef.child('listenerCount').transaction(currentCount => {
+                        const groupRef = firebase.database().ref('groups/' + enteredGroupID + '/listenerCount');
+                        groupRef.transaction(currentCount => {
                             return (currentCount || 0) + 1;
                         });
 
@@ -146,6 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error ending group session:', err);
             });
         } else {
+            // Decrement listener count when user leaves
+            const groupRef = firebase.database().ref('groups/' + groupID + '/listenerCount');
+            groupRef.transaction(currentCount => {
+                return (currentCount || 0) - 1;
+            });
             alert('You have left the group.');
         }
         // Clear the group data from localStorage
