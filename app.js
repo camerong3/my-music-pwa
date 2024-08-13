@@ -41,37 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
             leaveGroupButton.textContent = 'End Group Session';
         }
         
-        // Set up Firebase listener for current song updates with a slight delay
-        setTimeout(() => {
-            // Set up Firebase listener for current song updates
-            const currentGroup = firebase.database().ref('groups/' + groupID);
-            currentGroup.on('value', (snapshot) => {
-                if (!isGroupInitialized) {
-                    isGroupInitialized = true;
-                    console.log('Group has been initialized successfully.');
+        // Set up Firebase listener for current song updates
+        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        currentSongRef.on('value', (snapshot) => {
+            if (!isGroupInitialized) {
+                isGroupInitialized = true;
+                console.log('Group has been initialized successfully.');
+            }
+            if (!snapshot.exists()) {
+                if (isGroupInitialized) {
+                    // The group no longer exists, automatically leave the group
+                    alert('The group session has ended. You will be removed from the group.');
+                    localStorage.removeItem('spotifyGroupID');
+                    localStorage.removeItem('isGroupLeader');
+                    window.location.reload(); // Reload the page to update UI
                 }
-                if (!snapshot.exists()) {
-                    if (isGroupInitialized) {
-                        // The group no longer exists, automatically leave the group
-                        alert('The group session has ended. You will be removed from the group.');
-                        localStorage.removeItem('spotifyGroupID');
-                        localStorage.removeItem('isGroupLeader');
-                        window.location.reload(); // Reload the page to update UI
-                    }
-                    return;
-                }
+                return;
+            }
 
-                const songInfo = snapshot.val();
-                if (songInfo) {
-                    document.getElementById('song-title').textContent = songInfo.title;
-                    document.getElementById('artist-name').textContent = songInfo.artist;
-                    document.getElementById('album-art').src = songInfo.albumArt;
-                    document.getElementById('album-art').style.display = 'block';
-                } else {
-                    console.log('No song is currently playing.');
-                }
-            });
-        }, 500); // Adjust this delay as necessary (500ms is just an example)
+            const songInfo = snapshot.val();
+            if (songInfo) {
+                document.getElementById('song-title').textContent = songInfo.title;
+                document.getElementById('artist-name').textContent = songInfo.artist;
+                document.getElementById('album-art').src = songInfo.albumArt;
+                document.getElementById('album-art').style.display = 'block';
+            } else {
+                console.log('No song is currently playing.');
+            }
+        });
     } else {
         // No group is active, show create and join buttons
         createGroupButton.style.display = 'block';
