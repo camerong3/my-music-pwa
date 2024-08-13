@@ -298,14 +298,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
         
         votesRef.set({ keep: 0, skip: 0 }).then(() => {
+            hasVoted = false; // Reset the voting flag for the new song
+            localStorage.removeItem('hasVoted'); // Update local storage
+            window.location.reload(); // Reload the page to update UI
             console.log('Votes reset successfully.');
         }).catch(err => {
             console.error('Error resetting votes:', err);
         });
-
-        hasVoted = false; // Reset the voting flag for the new song
-        localStorage.removeItem('hasVoted'); // Update local storage
-        window.location.reload(); // Reload the page to update UI
     }
 
     // Function to move to the next song (for group leader only)
