@@ -46,9 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSongRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 // The group no longer exists, automatically leave the group
-                if (isLeader !== 'true') {
-                    alert('The group session has ended. You will be removed from the group.');
-                }
+                alert('The group session has ended. You will be removed from the group.');
                 localStorage.removeItem('spotifyGroupID');
                 localStorage.removeItem('isGroupLeader');
                 window.location.reload(); // Reload the page to update UI
@@ -126,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLeader) {
             // If the user is the group leader, remove the group from Firebase
             firebase.database().ref('groups/' + groupID).remove().then(() => {
-                alert('Group session ended.');
+                //alert('Group session ended.');
             }).catch(err => {
                 console.error('Error ending group session:', err);
             });
