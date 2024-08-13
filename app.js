@@ -5,29 +5,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if a group ID is stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
+    const createGroupButton = document.getElementById('create-group');
+    const joinGroupButton = document.getElementById('join-group');
+    const leaveGroupButton = document.getElementById('leave-group');
+    const groupIDInput = document.getElementById('group-id-input');
+
     if (groupID) {
+        // A group is active, show the leave button only
+        createGroupButton.style.display = 'none';
+        joinGroupButton.style.display = 'none';
+        groupIDInput.style.display = 'none';
+        leaveGroupButton.style.display = 'block';
+
         // Display the current group ID on the home page
         const groupIDElement = document.createElement('p');
         groupIDElement.id = 'current-group-id';
         groupIDElement.textContent = `Current Group ID: ${groupID}`;
         document.getElementById('app').appendChild(groupIDElement);
 
-        // Add a button to leave the group
-        const leaveGroupButton = document.createElement('button');
-        leaveGroupButton.textContent = 'Leave Group';
-        leaveGroupButton.addEventListener('click', () => {
-            localStorage.removeItem('spotifyGroupID');
-            alert('You have left the group.');
-            window.location.reload(); // Optionally reload the page to update the UI
-        });
-        document.getElementById('app').appendChild(leaveGroupButton);
-
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
-            console.log('Firebase listener triggered on home page');
             const songInfo = snapshot.val();
-            console.log('Current song data on home page:', songInfo);
             if (songInfo) {
                 document.getElementById('song-title').textContent = songInfo.title;
                 document.getElementById('artist-name').textContent = songInfo.artist;
@@ -37,7 +36,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('No song is currently playing.');
             }
         });
+    } else {
+        // No group is active, show create and join buttons
+        createGroupButton.style.display = 'block';
+        joinGroupButton.style.display = 'block';
+        leaveGroupButton.style.display = 'none';
+
+        // Handle group creation
+        createGroupButton.addEventListener('click', () => {
+            const newGroupID = 'group-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('spotifyGroupID', newGroupID);
+
+            firebase.database().ref('groups/' + newGroupID).set({
+                leader: true,
+                currentSong: null
+            });
+
+            alert(`Group created with ID: ${newGroupID}`);
+            window.location.reload(); // Reload the page to update UI
+        });
+
+        // Handle showing the group ID input
+        joinGroupButton.addEventListener('click', () => {
+            groupIDInput.style.display = 'block';
+        });
+
+        // Handle joining a group
+        groupIDInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                const enteredGroupID = groupIDInput.value.trim();
+                if (enteredGroupID) {
+                    localStorage.setItem('spotifyGroupID', enteredGroupID);
+                    alert(`Joined group with ID: ${enteredGroupID}`);
+                    window.location.reload(); // Reload the page to update UI
+                }
+            }
+        });
     }
+
+    // Handle leaving the group
+    leaveGroupButton.addEventListener('click', () => {
+        localStorage.removeItem('spotifyGroupID');
+        alert('You have left the group.');
+        window.location.reload(); // Reload the page to update UI
+    });
 
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
@@ -120,10 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (spotifyStatusDot) {
         // Set the indicator to red (not linked)
         spotifyStatusDot.style.backgroundColor = 'red';
-        //if (!token || now >= tokenExpiration) {
-        //    alert('Spotify session expired. Please re-authenticate.');
-        //    window.location.href = 'settings.html'; // Redirect to re-authenticate
-        //}
     }
 
     // Function to update the vote status
