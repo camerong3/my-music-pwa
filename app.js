@@ -113,18 +113,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if the group exists in Firebase
                 firebase.database().ref('groups/' + enteredGroupID).once('value').then(snapshot => {
                     if (snapshot.exists()) {
-                        // Group exists, join the group
-                        localStorage.setItem('spotifyGroupID', enteredGroupID);
-                        localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
-
                         // Increment listener count in Firebase when user joins
                         const groupRef = firebase.database().ref('groups/' + enteredGroupID + '/listenerCount');
                         groupRef.transaction(currentCount => {
                             return (currentCount || 0) + 1;
+                        }).then(() => {
+                            // Group exists, join the group
+                            localStorage.setItem('spotifyGroupID', enteredGroupID);
+                            localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
+                            // Reload the page to update UI
+                            window.location.reload();
+                        }).catch(err => {
+                            console.error('Error incrementing listener count:', err);
                         });
-
-                        //alert(`Joined group with ID: ${enteredGroupID}`);
-                        window.location.reload(); // Reload the page to update UI
                     } else {
                         // Group does not exist, show an error
                         alert('Group ID does not exist. Please check the ID and try again.');
