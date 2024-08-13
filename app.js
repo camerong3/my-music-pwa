@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let votes = { keep: 0, skip: 0 };
     let totalListeners = 5;
 
-    // Check if a group ID is stored in localStorage
-    const groupID = localStorage.getItem('spotifyGroupID');
     const createGroupButton = document.getElementById('create-group');
     const joinGroupButton = document.getElementById('join-group');
     const leaveGroupButton = document.getElementById('leave-group');
     const groupIDInput = document.getElementById('group-id-input');
+    const joinButton = document.createElement('button');
+
+    // Check if a group ID is stored in localStorage
+    const groupID = localStorage.getItem('spotifyGroupID');
 
     if (groupID) {
         // A group is active, show the leave button only
@@ -41,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createGroupButton.style.display = 'block';
         joinGroupButton.style.display = 'block';
         leaveGroupButton.style.display = 'none';
+        groupIDInput.style.display = 'none';
 
         // Handle group creation
         createGroupButton.addEventListener('click', () => {
@@ -56,21 +59,25 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload(); // Reload the page to update UI
         });
 
-        // Handle showing the group ID input
+        // Handle showing the group ID input and join button
         joinGroupButton.addEventListener('click', () => {
+            joinGroupButton.style.display = 'none';
             groupIDInput.style.display = 'block';
+
+            // Configure and display the new "Join" button
+            joinButton.textContent = 'Join';
+            joinButton.style.marginLeft = '10px';
+            document.getElementById('group-buttons').appendChild(joinButton);
         });
 
-        // Handle joining a group
-        groupIDInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                const enteredGroupID = groupIDInput.value.trim();
-                if (enteredGroupID) {
-                    // Override and save the new group ID in localStorage
-                    localStorage.setItem('spotifyGroupID', enteredGroupID);
-                    alert(`Joined group with ID: ${enteredGroupID}`);
-                    window.location.reload(); // Reload the page to update UI
-                }
+        // Handle joining a group when the "Join" button is pressed
+        joinButton.addEventListener('click', () => {
+            const enteredGroupID = groupIDInput.value.trim();
+            if (enteredGroupID) {
+                // Override and save the new group ID in localStorage
+                localStorage.setItem('spotifyGroupID', enteredGroupID);
+                alert(`Joined group with ID: ${enteredGroupID}`);
+                window.location.reload(); // Reload the page to update UI
             }
         });
     }
