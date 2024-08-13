@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createGroupButton) {
         createGroupButton.addEventListener('click', () => {
             const groupID = generateGroupID();
-            const groupLink = `${window.location.origin}${window.location.pathname}?group=${groupID}`;
+            const groupLink = `${window.location.origin}/index.html?group=${groupID}`;
             alert(`Share this link to invite others to your listening group: ${groupLink}`);
 
             // Store the group ID in Firebase
@@ -85,13 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle group member joining
     const urlParams = new URLSearchParams(window.location.search);
-    const groupID = urlParams.get('group');
-    if (groupID) {
-        localStorage.setItem('spotifyGroupID', groupID);
-        alert(`You have joined the listening group: ${groupID}`);
+    const newGroupID = urlParams.get('group');
 
-        // Listen for song updates from Firebase
-        firebase.database().ref('groups/' + groupID + '/currentSong').on('value', (snapshot) => {
+    if (newGroupID) {
+        // Clear the existing groupID from localStorage before setting the new one
+        localStorage.removeItem('spotifyGroupID');
+
+        // Store the new groupID in localStorage
+        localStorage.setItem('spotifyGroupID', newGroupID);
+
+        alert(`You have joined the listening group: ${newGroupID}`);
+
+        // Set up Firebase listener for the new group
+        const currentSongRef = firebase.database().ref('groups/' + newGroupID + '/currentSong');
+        currentSongRef.on('value', (snapshot) => {
             const songInfo = snapshot.val();
             if (songInfo) {
                 // Update the UI with the current song info
@@ -99,12 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('artist-name').textContent = songInfo.artist;
                 document.getElementById('album-art').src = songInfo.albumArt;
                 document.getElementById('album-art').style.display = 'block';
+            } else {
+                console.log('No song is currently playing.');
             }
         });
-
-        // Update the home page with the current group ID
-        if (document.getElementById('current-group-id')) {
-            document.getElementById('current-group-id').textContent = `Current Group ID: ${groupID}`;
-        }
     }
 });

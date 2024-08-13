@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let votes = { keep: 0, skip: 0 };
     let totalListeners = 5;
 
-    // Display current group ID if available
+    // Check if a group ID is stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
     if (groupID) {
+        // Display the current group ID on the home page
         const groupIDElement = document.createElement('p');
         groupIDElement.id = 'current-group-id';
         groupIDElement.textContent = `Current Group ID: ${groupID}`;
@@ -17,26 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
         leaveGroupButton.addEventListener('click', () => {
             localStorage.removeItem('spotifyGroupID');
             alert('You have left the group.');
-            window.location.reload();  // Optionally reload the page to update the UI
+            window.location.reload(); // Optionally reload the page to update the UI
         });
         document.getElementById('app').appendChild(leaveGroupButton);
-    }
 
-    // Set up Firebase listener for current song updates
-    const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
-    currentSongRef.on('value', (snapshot) => {
-        console.log('Firebase listener triggered on home page');
-        const songInfo = snapshot.val();
-        console.log('Current song data on home page:', songInfo);
-        if (songInfo) {
-            document.getElementById('song-title').textContent = songInfo.title;
-            document.getElementById('artist-name').textContent = songInfo.artist;
-            document.getElementById('album-art').src = songInfo.albumArt;
-            document.getElementById('album-art').style.display = 'block';
-        } else {
-            console.log('No song is currently playing.');
-        }
-    });
+        // Set up Firebase listener for current song updates
+        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        currentSongRef.on('value', (snapshot) => {
+            console.log('Firebase listener triggered on home page');
+            const songInfo = snapshot.val();
+            console.log('Current song data on home page:', songInfo);
+            if (songInfo) {
+                document.getElementById('song-title').textContent = songInfo.title;
+                document.getElementById('artist-name').textContent = songInfo.artist;
+                document.getElementById('album-art').src = songInfo.albumArt;
+                document.getElementById('album-art').style.display = 'block';
+            } else {
+                console.log('No song is currently playing.');
+            }
+        });
+    }
 
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
