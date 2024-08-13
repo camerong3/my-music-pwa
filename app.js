@@ -144,14 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
-        votes.keep++;
-        updateVoteStatus();
+        vote('keep');
     });
 
     document.getElementById("vote-skip").addEventListener("click", () => {
-        votes.skip++;
-        updateVoteStatus();
+        vote('skip');
     });
+
+    // Function to handle voting
+    function vote(action) {
+        const voteRef = firebase.database().ref('groups/' + groupID + '/votes/' + action);
+        
+        voteRef.transaction(currentVotes => {
+            return (currentVotes || 0) + 1;
+        }).then(() => {
+            console.log(`Voted to ${action}.`);
+        }).catch(err => {
+            console.error(`Error voting to ${action}:`, err);
+        });
+    }
 
     // Ensure the settings button exists before adding an event listener
     const settingsButton = document.getElementById('settings-button');
@@ -224,20 +235,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to update the vote status
     function updateVoteStatus() {
-        const voteStatus = document.getElementById("vote-status");
-        voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
+        const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
+        votesRef.once('value').then(snapshot => {
+            const votes = snapshot.val() || { keep: 0, skip: 0 }; // Default to 0 if no votes yet
+            const voteStatus = document.getElementById("vote-status");
 
-        if (votes.skip > totalListeners / 2) {
-            voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
-            setTimeout(() => {
-                currentSong = "Next Sample Song";
-                votes = { keep: 0, skip: 0 };
-                songTitle.textContent = currentSong;
-                artistName.textContent = "";
-                albumArt.style.display = 'none'; // Hide album art when song changes
-            }, 2000);
-        }
+            voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
+
+            if (votes.skip > totalListeners / 2) {
+                voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
+                setTimeout(() => {
+                    currentSong = "Next Sample Song";
+                    votesRef.set({ keep: 0, skip: 0 }); // Reset votes in Firebase
+                    document.getElementById("song-title").textContent = currentSong;
+                    document.getElementById("artist-name").textContent = "";
+                    document.getElementById("album-art").style.display = 'none'; // Hide album art when song changes
+                }, 2000);
+            }
+        }).catch(err => {
+            console.error('Error fetching votes from Firebase:', err);
+        });
     }
+
+    // Initial setup to listen for changes in the votes
+    firebase.database().ref('groups/' + groupID + '/votes').on('value', snapshot => {
+        updateVoteStatus(); // Update vote status whenever the vote counts change
+    });
 
     function pollCurrentSong() {
         const token = localStorage.getItem('spotifyAccessToken');
