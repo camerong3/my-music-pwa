@@ -82,8 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             alert(`Group created with ID: ${newGroupID}`);
-            window.location.reload(); // Reload the page to update UI
+
+            // Add a small delay before reloading the page
+            setTimeout(() => {
+                window.location.reload(); // Reload the page to update UI
+            }, 100); // 100 milliseconds should be enough, but you can adjust this if needed
         });
+
 
         // Handle showing the group ID input and join button
         joinGroupButton.addEventListener('click', () => {
