@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
-            alert(`Group created with ID: ${newGroupID}`);
+            //alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (enteredGroupID) {
                 // Override and save the new group ID in localStorage
                 localStorage.setItem('spotifyGroupID', enteredGroupID);
-                alert(`Joined group with ID: ${enteredGroupID}`);
+                //alert(`Joined group with ID: ${enteredGroupID}`);
                 window.location.reload(); // Reload the page to update UI
             }
         });
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle leaving the group
     leaveGroupButton.addEventListener('click', () => {
         localStorage.removeItem('spotifyGroupID');
-        alert('You have left the group.');
+        //alert('You have left the group.');
         window.location.reload(); // Reload the page to update UI
     });
 
