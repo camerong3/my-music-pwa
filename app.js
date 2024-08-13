@@ -399,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         hasVoted = false; // Reset the voting flag for the new song
         localStorage.removeItem('hasVoted'); // Update local storage
+        window.location.reload(); // Reload the page to update UI
     }
     
     // Poll the current song every 5 seconds (adjust as needed)
