@@ -44,7 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
         currentSongRef.on('value', (snapshot) => {
-            if (!snapshot.exists()) {
+            if (!snapshot.exists() && isLeader) {
+                // The group no longer exists, automatically leave the group
+                localStorage.removeItem('spotifyGroupID');
+                localStorage.removeItem('isGroupLeader');
+                window.location.reload(); // Reload the page to update UI
+                return;
+            } else if (!snapshot.exists() && !isLeader) {
                 // The group no longer exists, automatically leave the group
                 alert('The group session has ended. You will be removed from the group.');
                 localStorage.removeItem('spotifyGroupID');
