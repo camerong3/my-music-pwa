@@ -22,6 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('app').appendChild(leaveGroupButton);
     }
 
+    // Set up Firebase listener for current song updates
+    const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+    currentSongRef.on('value', (snapshot) => {
+        console.log('Firebase listener triggered on home page');
+        const songInfo = snapshot.val();
+        console.log('Current song data on home page:', songInfo);
+        if (songInfo) {
+            document.getElementById('song-title').textContent = songInfo.title;
+            document.getElementById('artist-name').textContent = songInfo.artist;
+            document.getElementById('album-art').src = songInfo.albumArt;
+            document.getElementById('album-art').style.display = 'block';
+        } else {
+            console.log('No song is currently playing.');
+        }
+    });
+
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
 
@@ -103,10 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (spotifyStatusDot) {
         // Set the indicator to red (not linked)
         spotifyStatusDot.style.backgroundColor = 'red';
-        if (!token || now >= tokenExpiration) {
-            alert('Spotify session expired. Please re-authenticate.');
-            //window.location.href = 'settings.html'; // Redirect to re-authenticate
-        }
+        //if (!token || now >= tokenExpiration) {
+        //    alert('Spotify session expired. Please re-authenticate.');
+        //    window.location.href = 'settings.html'; // Redirect to re-authenticate
+        //}
     }
 
     // Function to update the vote status
