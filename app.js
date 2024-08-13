@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hasVoted = false; // Reset the voting flag for the new song
-        localStorage.setItem('hasVoted', 'false'); // Update local storage
+        localStorage.removeItem('hasVoted'); // Update local storage
         window.location.reload(); // Reload the page to update UI
     }
 
