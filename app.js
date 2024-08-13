@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("song-title").textContent = currentSong;
 
     let hasVoted = false;  // Local flag to track if the user has already voted for the current song
+    localStorage.setItem('hasVoted', hasVoted);
     let currentSongTitle = ""; // Variable to track the current song title
 
     // Event listeners for voting buttons
@@ -171,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hasVoted) {
             castVote('keep');
             hasVoted = true; // Set the flag to true after voting
+            localStorage.setItem('hasVoted', hasVoted);
         } else {
             alert('You have already voted for this song.');
         }
@@ -180,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hasVoted) {
             castVote('skip');
             hasVoted = true; // Set the flag to true after voting
+            localStorage.setItem('hasVoted', hasVoted); 
         } else {
             alert('You have already voted for this song.');
         }
@@ -328,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Song has changed, reset votes and the hasVoted flag
             localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
             hasVoted = false; // Reset the voting flag for the new song
-            localStorage.setItem('hasVoted', JSON.stringify(false)); // Update local storage
+            localStorage.setItem('hasVoted', hasVoted); // Update local storage
             resetVotes(); // Reset votes in Firebase
         } else {
             console.log('Not the group leader or Spotify token is missing.');
@@ -372,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Song has changed, reset votes and the hasVoted flag
                         localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
                         hasVoted = false; // Reset the voting flag for the new song
-                        localStorage.setItem('hasVoted', JSON.stringify(false)); // Update local storage
+                        localStorage.setItem('hasVoted', hasVoted); // Update local storage
                         resetVotes(); // Reset votes in Firebase
                     }
     
