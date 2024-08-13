@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (event.key === 'Enter') {
                 const enteredGroupID = groupIDInput.value.trim();
                 if (enteredGroupID) {
+                    // Override and save the new group ID in localStorage
                     localStorage.setItem('spotifyGroupID', enteredGroupID);
                     alert(`Joined group with ID: ${enteredGroupID}`);
                     window.location.reload(); // Reload the page to update UI
