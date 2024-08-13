@@ -9,11 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupIDInput = document.getElementById('group-id-input');
     const joinButton = document.createElement('button');
 
-    // Check if a group ID is stored in localStorage
+    // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
+    const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
     if (groupID) {
-        // A group is active, show the leave button only
+        // A group is active, show the leave/end button only
         createGroupButton.style.display = 'none';
         joinGroupButton.style.display = 'none';
         groupIDInput.style.display = 'none';
@@ -24,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         groupIDElement.id = 'current-group-id';
         groupIDElement.textContent = `Current Group ID: ${groupID}`;
         document.getElementById('app').appendChild(groupIDElement);
+
+        // Update button text if the user is the leader
+        if (isLeader) {
+            leaveGroupButton.textContent = 'End Group Session';
+        }
 
         // Set up Firebase listener for current song updates
         const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
@@ -49,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createGroupButton.addEventListener('click', () => {
             const newGroupID = 'group-' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('spotifyGroupID', newGroupID);
+            localStorage.setItem('isGroupLeader', 'true'); // Mark this user as the group leader
 
             firebase.database().ref('groups/' + newGroupID).set({
                 leader: true,
@@ -76,16 +83,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (enteredGroupID) {
                 // Override and save the new group ID in localStorage
                 localStorage.setItem('spotifyGroupID', enteredGroupID);
+                localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
                 //alert(`Joined group with ID: ${enteredGroupID}`);
                 window.location.reload(); // Reload the page to update UI
             }
         });
     }
 
-    // Handle leaving the group
+    // Handle leaving the group or ending the group session
     leaveGroupButton.addEventListener('click', () => {
+        if (isLeader) {
+            // If the user is the group leader, remove the group from Firebase
+            firebase.database().ref('groups/' + groupID).remove().then(() => {
+                //alert('Group session ended.');
+            }).catch(err => {
+                console.error('Error ending group session:', err);
+            });
+        } else {
+            alert('You have left the group.');
+        }
+        // Clear the group data from localStorage
         localStorage.removeItem('spotifyGroupID');
-        //alert('You have left the group.');
+        localStorage.removeItem('isGroupLeader');
         window.location.reload(); // Reload the page to update UI
     });
 
