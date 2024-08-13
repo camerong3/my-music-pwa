@@ -14,39 +14,14 @@
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- Firebase App (the core Firebase SDK) -->
-    if (!window.firebaseInitialized) {
-        window.firebaseInitialized = true;
-    
-        // Initialize Firebase here
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-        <!-- Firebase Analytics -->
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
-        <!-- Firebase Realtime Database -->
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-        <script>
-            // Your web app's Firebase configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
-                authDomain: "my-music-pwa.firebaseapp.com",
-                databaseURL: "https://my-music-pwa-default-rtdb.firebaseio.com",
-                projectId: "my-music-pwa",
-                storageBucket: "my-music-pwa.appspot.com",
-                messagingSenderId: "929710123132",
-                appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
-                measurementId: "G-VVV87VMFVV"
-            };
-
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            firebase.analytics();
-            const database = firebase.database();
-        </script>
-    }
-
+    <!-- Styles and manifest -->
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
+
+    <!-- Firebase SDKs -->
+    <script async src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script async src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+    <script async src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <div id="app">
@@ -85,6 +60,32 @@
             <button id="settings-button">Settings</button>
         </div>
     </div>
+
+    <!-- Firebase initialization and custom scripts -->
+    <script>
+        // Ensure Firebase is initialized only once
+        if (!window.firebaseInitialized) {
+            window.firebaseInitialized = true;
+
+            // Your Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
+                authDomain: "my-music-pwa.firebaseapp.com",
+                databaseURL: "https://my-music-pwa-default-rtdb.firebaseio.com",
+                projectId: "my-music-pwa",
+                storageBucket: "my-music-pwa.appspot.com",
+                messagingSenderId: "929710123132",
+                appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
+                measurementId: "G-VVV87VMFVV"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            firebase.analytics();
+            const database = firebase.database();
+        }
+    </script>
+
     <!-- Custom Scripts -->
     <script src="settings.js"></script>
     <script src="app.js"></script>
