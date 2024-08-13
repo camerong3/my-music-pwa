@@ -64,8 +64,8 @@
     <!-- Firebase initialization and custom scripts -->
     <script>
         // Ensure Firebase is initialized only once
-        //if (!window.firebaseInitialized) {
-        //    window.firebaseInitialized = true;
+        if (!window.firebaseInitialized) {
+            window.firebaseInitialized = true;
 
             // Your Firebase configuration
             const firebaseConfig = {
@@ -83,7 +83,7 @@
             firebase.initializeApp(firebaseConfig);
             firebase.analytics();
             const database = firebase.database();
-        //}
+        }
     </script>
 
     <!-- Custom Scripts -->
