@@ -301,10 +301,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to move to the next song (pseudo-function)
+    // Function to move to the next song (for group leader only)
     function moveToNextSong() {
-        // Logic to change the song
-        // This will trigger updateVoteStatus on the next song
+        const isLeader = localStorage.getItem('isGroupLeader') === 'true';
+        const token = localStorage.getItem('spotifyAccessToken');
+
+        if (isLeader && token) {
+            // Make the Spotify API call to skip to the next song
+            fetch('https://api.spotify.com/v1/me/player/next', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    console.log('Successfully skipped to the next song.');
+                } else {
+                    console.error('Failed to skip to the next song:', response.status);
+                }
+            })
+            .catch(err => {
+                console.error('Error skipping to the next song:', err);
+            });
+        } else {
+            console.log('Not the group leader or Spotify token is missing.');
+        }
     }
 
     // Initial setup to listen for changes in the votes

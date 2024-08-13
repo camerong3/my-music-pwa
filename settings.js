@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Spotify client details
     const clientId = '3d83a8c45b8848329a38d3393f5d4b00';  // Replace with your actual Spotify Client ID
     const redirectUri = 'https://camerong3.github.io/my-music-pwa/callback.html';  // Replace with your actual redirect URI
-    const scopes = 'user-read-private user-read-email user-read-playback-state';  // Scopes you want to request from the user
+    const scopes = 'user-read-private user-read-email user-read-playback-state user-modify-playback-state';  // Scopes you want to request from the user
 
     // Spotify login button
     const spotifyLoginButton = document.getElementById('spotify-login');
