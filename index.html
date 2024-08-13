@@ -18,10 +18,6 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <div id="app">
@@ -68,6 +64,11 @@
             window.firebaseInitialized = true;
 
             // Your Firebase configuration
+            // --- Firebase SDKs 
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"
+
             const firebaseConfig = {
                 apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
                 authDomain: "my-music-pwa.firebaseapp.com",
