@@ -3,6 +3,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let votes = { keep: 0, skip: 0 };
     let totalListeners = 5;
 
+    // Display current group ID if available
+    const groupID = localStorage.getItem('spotifyGroupID');
+    if (groupID) {
+        const groupIDElement = document.createElement('p');
+        groupIDElement.id = 'current-group-id';
+        groupIDElement.textContent = `Current Group ID: ${groupID}`;
+        document.getElementById('app').appendChild(groupIDElement);
+
+        // Add a button to leave the group
+        const leaveGroupButton = document.createElement('button');
+        leaveGroupButton.textContent = 'Leave Group';
+        leaveGroupButton.addEventListener('click', () => {
+            localStorage.removeItem('spotifyGroupID');
+            alert('You have left the group.');
+            window.location.reload();  // Optionally reload the page to update the UI
+        });
+        document.getElementById('app').appendChild(leaveGroupButton);
+    }
+
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
 

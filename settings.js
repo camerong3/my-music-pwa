@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if Firebase is initialized
+    if (typeof firebase === 'undefined') {
+        console.error('Firebase is not initialized');
+        return;
+    }
+
     // Spotify client details
     const clientId = '3d83a8c45b8848329a38d3393f5d4b00';  // Replace with your actual Spotify Client ID
     const redirectUri = 'https://camerong3.github.io/my-music-pwa/callback.html';  // Replace with your actual redirect URI
@@ -85,20 +91,20 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`You have joined the listening group: ${groupID}`);
 
         // Listen for song updates from Firebase
-        console.log('Retrieved song info:', songInfo); // When retrieving from Firebase
         firebase.database().ref('groups/' + groupID + '/currentSong').on('value', (snapshot) => {
             const songInfo = snapshot.val();
             if (songInfo) {
-                updateSongUI(songInfo);
+                // Update the UI with the current song info
+                document.getElementById('song-title').textContent = songInfo.title;
+                document.getElementById('artist-name').textContent = songInfo.artist;
+                document.getElementById('album-art').src = songInfo.albumArt;
+                document.getElementById('album-art').style.display = 'block';
             }
         });
-    }
 
-    // Update the song UI
-    function updateSongUI(songInfo) {
-        document.getElementById("song-title").textContent = songInfo.title;
-        document.getElementById("artist-name").textContent = songInfo.artist;
-        document.getElementById("album-art").src = songInfo.albumArt;
-        document.getElementById("album-art").style.display = 'block';
+        // Update the home page with the current group ID
+        if (document.getElementById('current-group-id')) {
+            document.getElementById('current-group-id').textContent = `Current Group ID: ${groupID}`;
+        }
     }
 });
