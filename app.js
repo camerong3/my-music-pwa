@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
-    Boolean isLeader = localStorage.getItem('isGroupLeader') === 'true';
+    const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
     if (groupID) {
         // A group is active, show the leave/end button only
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSongRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 // The group no longer exists, automatically leave the group
-                if (!isLeader) {
+                if (isLeader != 'true') {
                     alert('The group session has ended. You will be removed from the group.');
                 }
                 localStorage.removeItem('spotifyGroupID');
