@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createGroupButton) {
         createGroupButton.addEventListener('click', () => {
             const groupID = generateGroupID();
-            const groupLink = `${window.location.origin}/index.html?group=${groupID}`;
+            const groupLink = `${window.location.origin}/my-music-pwa/index.html?group=${groupID}`;
             alert(`Share this link to invite others to your listening group: ${groupLink}`);
 
             // Store the group ID in Firebase
