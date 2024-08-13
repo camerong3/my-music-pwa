@@ -17,7 +17,6 @@
     <!-- Styles and manifest -->
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-
 </head>
 <body>
     <div id="app">
@@ -62,7 +61,7 @@
         // Ensure Firebase is initialized only once
         if (!window.firebaseInitialized) {
             window.firebaseInitialized = true;
-    
+
             // Function to dynamically load a script
             function loadScript(src, callback) {
                 const script = document.createElement('script');
@@ -70,12 +69,12 @@
                 script.onload = callback;
                 document.head.appendChild(script);
             }
-    
+
             // Load Firebase SDKs in the correct order
             loadScript("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js", function () {
                 loadScript("https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js", function () {
                     loadScript("https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js", function () {
-                        // Your Firebase configuration
+                        // Initialize Firebase
                         const firebaseConfig = {
                             apiKey: "AIzaSyDrfWiNwnzxZ0Lfs5IaUdb7mFq2NqTBpqw",
                             authDomain: "my-music-pwa.firebaseapp.com",
@@ -86,25 +85,32 @@
                             appId: "1:929710123132:web:c05da47e0d6650bc3c01f9",
                             measurementId: "G-VVV87VMFVV"
                         };
-    
-                        // Initialize Firebase
+
                         firebase.initializeApp(firebaseConfig);
-    
+
                         // Initialize Firebase Analytics if available
                         if (typeof firebase.analytics === 'function') {
                             firebase.analytics();
                         }
-    
-                        // Your database is now ready to be used
+
                         const database = firebase.database();
+
+                        // Once Firebase is fully initialized, load your custom scripts
+                        loadCustomScripts();
                     });
                 });
             });
-        }
-    </script>    
 
-    <!-- Custom Scripts -->
-    <script src="settings.js"></script>
-    <script src="app.js"></script>
+            // Function to load custom scripts after Firebase initialization
+            function loadCustomScripts() {
+                const scripts = ["settings.js", "app.js"];
+                scripts.forEach(src => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    document.head.appendChild(script);
+                });
+            }
+        }
+    </script>
 </body>
 </html>
