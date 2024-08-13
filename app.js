@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSong: null
             });
 
-            alert(`Group created with ID: ${newGroupID}`);
+            //alert(`Group created with ID: ${newGroupID}`);
             window.location.reload(); // Reload the page to update UI
         });
 
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Group exists, join the group
                         localStorage.setItem('spotifyGroupID', enteredGroupID);
                         localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
-                        alert(`Joined group with ID: ${enteredGroupID}`);
+                        //alert(`Joined group with ID: ${enteredGroupID}`);
                         window.location.reload(); // Reload the page to update UI
                     } else {
                         // Group does not exist, show an error
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error ending group session:', err);
             });
         } else {
-            alert('You have left the group.');
+            //alert('You have left the group.');
         }
         // Clear the group data from localStorage
         localStorage.removeItem('spotifyGroupID');
