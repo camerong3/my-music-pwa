@@ -396,10 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("artist-name").textContent = songInfo.artist;
         document.getElementById("album-art").src = songInfo.albumArt;
         document.getElementById("album-art").style.display = 'block';
-        
-        hasVoted = false; // Reset the voting flag for the new song
-        localStorage.removeItem('hasVoted'); // Update local storage
-        window.location.reload(); // Reload the page to update UI
     }
     
     // Poll the current song every 5 seconds (adjust as needed)
