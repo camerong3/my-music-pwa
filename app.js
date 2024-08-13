@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Increment listener count in Firebase when user joins
-            const groupRef = firebase.database().ref('groups/' + groupID);
+            const groupRef = firebase.database().ref('groups/' + newGroupID);
             groupRef.child('listenerCount').transaction(currentCount => {
                 return (currentCount || 0) + 1;
             });
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
 
                         // Increment listener count in Firebase when user joins
-                        const groupRef = firebase.database().ref('groups/' + groupID);
+                        const groupRef = firebase.database().ref('groups/' + enteredGroupID);
                         groupRef.child('listenerCount').transaction(currentCount => {
                             return (currentCount || 0) + 1;
                         });
@@ -312,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let previousSongTitle = localStorage.getItem('currentSongTitle') || null; // Get the previously stored song title
         
         // Fetch listener count from Firebase
+        const groupRef = firebase.database().ref('groups/' + groupID);
         groupRef.child('listenerCount').on('value', snapshot => {
             totalListeners = snapshot.val() || 0;
             console.log('Total listeners updated:', totalListeners);
