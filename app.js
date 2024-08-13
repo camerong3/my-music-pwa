@@ -146,8 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
 
-    // Local flag to track if the user has already voted for the current song
-    let hasVoted = false;
+    let hasVoted = false;  // Local flag to track if the user has already voted for the current song
+    let currentSongID = null; // Variable to track the current song ID
 
     // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
@@ -251,40 +251,56 @@ document.addEventListener('DOMContentLoaded', () => {
         spotifyStatusDot.style.backgroundColor = 'red';
     }
 
-    // Function to update the vote status
+    // Function to update the vote status and check for song change
     function updateVoteStatus() {
         const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
-        votesRef.once('value').then(snapshot => {
-            const votes = snapshot.val() || { keep: 0, skip: 0 }; // Default to 0 if no votes yet
-            const voteStatus = document.getElementById("vote-status");
-
-            voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
-
-            if (votes.skip > totalListeners / 2) {
-                voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
-                setTimeout(() => {
-                    currentSong = "Next Sample Song";
-                    resetVotesAndFlag(); // Reset votes and local flag when song changes
-                    document.getElementById("song-title").textContent = currentSong;
-                    document.getElementById("artist-name").textContent = "";
-                    document.getElementById("album-art").style.display = 'none'; // Hide album art when song changes
-                }, 2000);
+        const songRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+        
+        songRef.once('value').then(snapshot => {
+            const newSongID = snapshot.val().id; // Assuming each song has a unique ID
+            if (newSongID !== currentSongID) {
+                // Song has changed, reset votes and flag
+                currentSongID = newSongID;
+                hasVoted = false; // Reset the voting flag for the new song
+                resetVotes(); // Reset votes in Firebase
             }
+            
+            votesRef.once('value').then(snapshot => {
+                const votes = snapshot.val() || { keep: 0, skip: 0 }; // Default to 0 if no votes yet
+                const voteStatus = document.getElementById("vote-status");
+
+                voteStatus.textContent = `Votes: Keep (${votes.keep}), Skip (${votes.skip})`;
+
+                if (votes.skip > totalListeners / 2) {
+                    voteStatus.textContent = "Majority voted to skip the song. Advancing to the next song...";
+                    setTimeout(() => {
+                        // Logic to move to the next song
+                        moveToNextSong();
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Error fetching votes from Firebase:', err);
+            });
         }).catch(err => {
-            console.error('Error fetching votes from Firebase:', err);
+            console.error('Error fetching current song from Firebase:', err);
         });
     }
 
-    // Function to reset votes in Firebase and the local voting flag
-    function resetVotesAndFlag() {
+    // Function to reset votes in Firebase
+    function resetVotes() {
         const votesRef = firebase.database().ref('groups/' + groupID + '/votes');
         
         votesRef.set({ keep: 0, skip: 0 }).then(() => {
             console.log('Votes reset successfully.');
-            hasVoted = false; // Reset the local flag so the user can vote on the next song
         }).catch(err => {
             console.error('Error resetting votes:', err);
         });
+    }
+
+    // Function to move to the next song (pseudo-function)
+    function moveToNextSong() {
+        // Logic to change the song
+        // This will trigger updateVoteStatus on the next song
     }
 
     // Initial setup to listen for changes in the votes
