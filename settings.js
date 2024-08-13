@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if Firebase is initialized
     if (typeof firebase === 'undefined' || !firebase.apps.length) {
         console.error('Firebase is not initialized');
-        return;
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        const database = firebase.database();
     }
 
     // Spotify client details
