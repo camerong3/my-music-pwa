@@ -24,14 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
     if (groupID) {
+        console.log('Existing group detected:', groupID);
         updateUIForGroupActive(groupID, isLeader);
     } else {
+        console.log('No existing group detected. Setting up initial UI.');
         setupInitialUI();
     }
 
     // Handle group creation
     createGroupButton.addEventListener('click', () => {
         const newGroupID = generateGroupID();
+        console.log('Generated new group ID:', newGroupID);
+
         localStorage.setItem('spotifyGroupID', newGroupID);
         localStorage.setItem('isGroupLeader', 'true'); // Mark this user as the group leader
 
@@ -60,12 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle joining a group when the "Join" button is pressed
     joinButton.addEventListener('click', () => {
         const enteredGroupID = groupIDInput.value.trim();
+        console.log('Attempting to join group with ID:', enteredGroupID);
+
         if (enteredGroupID) {
             firebase.database().ref('groups/' + enteredGroupID).once('value').then(snapshot => {
                 if (snapshot.exists()) {
+                    console.log('Group exists in Firebase. Joining group...');
                     localStorage.setItem('spotifyGroupID', enteredGroupID);
                     localStorage.removeItem('isGroupLeader');
-                    console.log(`Joined group with ID: ${enteredGroupID}`);
                     updateUIForGroupActive(enteredGroupID, false);
                 } else {
                     alert('Group ID does not exist. Please check the ID and try again.');
@@ -87,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             alert('You have left the group.');
         }
+
         localStorage.removeItem('spotifyGroupID');
         localStorage.removeItem('isGroupLeader');
         setupInitialUI();
@@ -94,15 +101,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to update the UI when a group is active
     function updateUIForGroupActive(groupID, isLeader) {
+        console.log('Updating UI for active group:', groupID);
+
         createGroupButton.style.display = 'none';
         joinGroupButton.style.display = 'none';
         groupIDInput.style.display = 'none';
         leaveGroupButton.style.display = 'block';
 
-        const groupIDElement = document.getElementById('current-group-id') || document.createElement('p');
-        groupIDElement.id = 'current-group-id';
+        let groupIDElement = document.getElementById('current-group-id');
+        if (!groupIDElement) {
+            groupIDElement = document.createElement('p');
+            groupIDElement.id = 'current-group-id';
+            document.getElementById('app').appendChild(groupIDElement);
+        }
         groupIDElement.textContent = `Current Group ID: ${groupID}`;
-        document.getElementById('app').appendChild(groupIDElement);
 
         leaveGroupButton.textContent = isLeader ? 'End Group Session' : 'Leave Group';
 
@@ -132,6 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to set up the initial UI state
     function setupInitialUI() {
+        console.log('Setting up initial UI.');
+
         createGroupButton.style.display = 'block';
         joinGroupButton.style.display = 'block';
         leaveGroupButton.style.display = 'none';
@@ -150,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set the initial song title
     document.getElementById("song-title").textContent = currentSong;
 
+    // Event listeners for voting buttons
     document.getElementById("vote-keep").addEventListener("click", () => {
         votes.keep++;
         updateVoteStatus();
