@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f0f0f0;
+    background-color: #15202B;
     padding: 25px;
 }
 
@@ -97,12 +97,13 @@ button:hover {
 #song-info {
     text-align: center;
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 35px;
 }
 
 #song-title {
     font-size: 24px;
     font-weight: bold;
+    color: #FFFFFF
     margin: 8px 0;
 }
 
@@ -114,7 +115,7 @@ button:hover {
 
 .poll {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 #vote-keep, #vote-skip {
