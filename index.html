@@ -24,18 +24,17 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
+   <!-- Album Art -->
+    <div id="album-art-container">
+        <img id="album-art" src="" alt="Album Art">
+    </div>
+    
+    <!-- Song Information -->
+    <div id="song-info">
+        <h1 id="song-title">Loading...</h1>
+        <p id="artist-name">Artist Name</p>
+    </div>
     <div id="app">
-        <!-- Album Art -->
-        <div id="album-art-container">
-            <img id="album-art" src="" alt="Album Art">
-        </div>
-    
-        <!-- Song Information -->
-        <div id="song-info">
-            <h1 id="song-title">Loading...</h1>
-            <p id="artist-name">Artist Name</p>
-        </div>
-    
         <!-- Voting Buttons -->
         <div class="poll">
             <button id="vote-keep">Keep Playing</button>
