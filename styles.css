@@ -1,12 +1,12 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #15202B;
+    background-color: #121212;
     padding: 25px;
 }
 
 #app {
-    background: white;
+    background: #15202B;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -98,12 +98,13 @@ button:hover {
     text-align: center;
     margin-top: 20px;
     margin-bottom: 35px;
+    color: #D9D9D9;
 }
 
 #song-title {
     font-size: 24px;
     font-weight: bold;
-    color: #000000
+    color: #FFFFFF
     margin: 8px 0;
 }
 
