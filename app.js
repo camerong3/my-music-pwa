@@ -19,17 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return groupID;
     }
 
-    function updateTextColorBasedOnBackground(backgroundColor) {
-        const rgb = parseInt(backgroundColor.substring(1), 16); // Convert hex to RGB
-        const r = (rgb >> 16) & 0xff;
-        const g = (rgb >>  8) & 0xff;
-        const b = (rgb >>  0) & 0xff;
-        const luminance = 0.2126*r + 0.7152*g + 0.0722*b;
-    
-        const textColor = (luminance < 128) ? '#FFFFFF' : '#000000';
-        document.body.style.color = textColor;
-    }
-
     function updateBackgroundColor(imageUrl) {
         const img = new Image();
         img.crossOrigin = "Anonymous";
@@ -38,20 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
         img.onload = function() {
             const vibrant = new Vibrant(img);
             const swatches = vibrant.swatches();
-            
-            // Choose a swatch (you can choose based on Vibrant, Muted, etc.)
-            let backgroundColor;
-            if (swatches.Vibrant) {
-                backgroundColor = swatches.Vibrant.getHex();
-            } else if (swatches.Muted) {
-                backgroundColor = swatches.Muted.getHex();
-            } else {
-                backgroundColor = "#15202B"; // Fallback color
+
+            // Set the background to the Muted color
+            if (swatches.Muted) {
+                document.body.style.backgroundColor = swatches.Muted.getHex();
             }
 
-            document.body.style.backgroundColor = backgroundColor;
-            updateTextColorBasedOnBackground(backgroundColor);
-        }
+            // Set text colors based on other swatches
+            if (swatches.Vibrant) {
+                document.getElementById("song-title").style.color = swatches.Vibrant.getHex();
+            }
+
+            if (swatches.DarkVibrant) {
+                document.getElementById("artist-name").style.color = swatches.DarkVibrant.getHex();
+            }
+        };
     }
 
     // Check if a group ID and leader flag are stored in localStorage
