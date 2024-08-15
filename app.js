@@ -98,6 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const adjustedDarkVibrant = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
                 document.getElementById("artist-name").style.color = adjustedDarkVibrant;
             }
+
+            // Adjust the settings icon color based on the background color
+            const settingsButton = document.getElementById("settings-button");
+            if (settingsButton) {
+                const adjustedButtonColor = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor); // Base color can be changed
+                settingsButton.style.color = adjustedButtonColor;
+            }
         };
     }
 

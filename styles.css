@@ -36,7 +36,7 @@ button:hover {
 
 #spotify-status-container {
     position: absolute;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
     display: flex;
     align-items: center;
@@ -51,17 +51,13 @@ button:hover {
 }
 
 #settings-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    border: none;
+    font-size: 24px; /* Adjust the size of the icon */
+    color: #007bff; /* Icon color */
     cursor: pointer;
 }
 
 #settings-button:hover {
-    background-color: #0056b3;
+    color: #0056b3; /* Change color on hover */
 }
 
 .settings {
@@ -84,7 +80,8 @@ button:hover {
 
 /* Updated Styles */
 #album-art-container {
-    margin-top: 0px;
+    top: 60px;
+    margin-top: 10px;
     text-align: center;
     width: 100%;
 }
