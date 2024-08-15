@@ -44,6 +44,66 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // Update song information in the UI and adjust colors
+    function updateSongUI(songInfo) {
+        document.getElementById("song-title").textContent = songInfo.title;
+        document.getElementById("artist-name").textContent = songInfo.artist;
+        document.getElementById("album-art").src = songInfo.albumArt;
+        document.getElementById("album-art").style.display = 'block';
+
+        // Update the background color based on the album art
+        updateBackgroundColor(songInfo.albumArt);
+    }
+
+    // Poll the current song every 5 seconds (adjust as needed)
+    function pollCurrentSong() {
+        const token = localStorage.getItem('spotifyAccessToken');
+        const groupID = localStorage.getItem('spotifyGroupID');
+        let previousSongTitle = localStorage.getItem('currentSongTitle') || null; // Get the previously stored song title
+        
+        if (token) {
+            fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.item) {
+                    const songInfo = {
+                        title: data.item.name,
+                        artist: data.item.artists.map(artist => artist.name).join(', '),
+                        albumArt: data.item.album.images[0].url
+                    };
+    
+                    // Check if the song title has changed
+                    if (songInfo.title !== previousSongTitle) {
+                        // Song has changed, reset votes and the hasVoted flag if a group is active
+                        if (groupID) {
+                            resetVotes(); // Reset votes in Firebase
+                        }
+                        localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
+                    }
+
+                    // Update the UI
+                    updateSongUI(songInfo);
+
+                    // Store the current song information in Firebase if in a group
+                    if (groupID) {
+                        firebase.database().ref('groups/' + groupID + '/currentSong').set(songInfo);
+                    }
+                }
+            })
+            .catch(err => console.error('Error fetching currently playing song:', err));
+        }
+    }
+
+    // Initial song polling
+    pollCurrentSong();
+
+    // Set up the song polling interval
+    setInterval(pollCurrentSong, 5000);
+
     // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
@@ -78,28 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         });
-
-        // Set up Firebase listener for current song updates
-        function updateSong () {
-            const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
-            currentSongRef.on('value', (snapshot) => {
-                const songInfo = snapshot.val();
-                if (songInfo) {
-                    document.getElementById('song-title').textContent = songInfo.title;
-                    document.getElementById('artist-name').textContent = songInfo.artist;
-                    document.getElementById('album-art').src = songInfo.albumArt;
-                    document.getElementById('album-art').style.display = 'block';
-
-                    // Update the background color based on the album art
-                    updateBackgroundColor(songInfo.albumArt);
-                } else {
-                    console.log('No song is currently playing.');
-                }
-            });
-        }
-
-        // Poll the current song every 5 seconds (adjust as needed)
-        setInterval(updateSong, 5000);
     } else {
         // No group is active, show create and join buttons
         createGroupButton.style.display = 'block';
@@ -124,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return (currentCount || 0) + 1;
             });
 
-            //alert(`Group created with ID: ${newGroupID}`);
-            window.location.reload(); // Reload the page to update UI
+            // Reload the page to update UI
+            window.location.reload();
         });
 
         // Handle showing the group ID input and join button
@@ -377,65 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateVoteStatus(); // Update vote status whenever the vote counts change
     });
 
-    function pollCurrentSong() {
-        const token = localStorage.getItem('spotifyAccessToken');
-        const groupID = localStorage.getItem('spotifyGroupID');
-        let previousSongTitle = localStorage.getItem('currentSongTitle') || null; // Get the previously stored song title
-        
-        // Fetch listener count from Firebase
-        const groupRef = firebase.database().ref('groups/' + groupID);
-        groupRef.child('listenerCount').on('value', snapshot => {
-            totalListeners = snapshot.val() || 0;
-            console.log('Total listeners updated:', totalListeners);
-        });
-
-        if (token && groupID) {
-            fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.item) {
-                    const songInfo = {
-                        title: data.item.name,
-                        artist: data.item.artists.map(artist => artist.name).join(', '),
-                        albumArt: data.item.album.images[0].url
-                    };
-    
-                    // Check if the song title has changed
-                    if (songInfo.title !== previousSongTitle) {
-                        // Song has changed, reset votes and the hasVoted flag
-                        localStorage.setItem('currentSongTitle', songInfo.title); // Update the stored song title
-                        resetVotes(); // Reset votes in Firebase
-                    }
-    
-                    // Store the current song information in Firebase
-                    console.log('Storing song info:', songInfo); // Before storing in Firebase
-                    firebase.database().ref('groups/' + groupID + '/currentSong').set(songInfo);
-    
-                    // Update the UI for the leader
-                    updateSongUI(songInfo);
-                }
-            })
-            .catch(err => console.error('Error fetching currently playing song:', err));
-        }
-    }
-
-    function updateSongUI(songInfo) {
-        document.getElementById("song-title").textContent = songInfo.title;
-        document.getElementById("artist-name").textContent = songInfo.artist;
-        document.getElementById("album-art").src = songInfo.albumArt;
-        document.getElementById("album-art").style.display = 'block';
-
-        // Update the background color based on the album art
-        updateBackgroundColor(songInfo.albumArt);
-    }
-    
-    // Poll the current song every 5 seconds (adjust as needed)
-    setInterval(pollCurrentSong, 5000);
-    
     // Register the service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
