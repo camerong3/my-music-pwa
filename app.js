@@ -19,27 +19,77 @@ document.addEventListener('DOMContentLoaded', () => {
         return groupID;
     }
 
+    function getLuminance(hex) {
+        const rgb = parseInt(hex.substring(1), 16); // Convert hex to RGB
+        const r = (rgb >> 16) & 0xff;
+        const g = (rgb >>  8) & 0xff;
+        const b = (rgb >>  0) & 0xff;
+    
+        // Convert to a value between 0 and 1
+        const rLum = r / 255;
+        const gLum = g / 255;
+        const bLum = b / 255;
+    
+        // Apply the luminance formula
+        return 0.2126 * rLum + 0.7152 * gLum + 0.0722 * bLum;
+    }
+    
+    function adjustTextColorForContrast(textHex, backgroundHex) {
+        const backgroundLuminance = getLuminance(backgroundHex);
+    
+        // If background is dark, lighten the text color
+        if (backgroundLuminance < 0.5) {
+            return lightenColor(textHex, 50);
+        } else {
+            return darkenColor(textHex, 50);
+        }
+    }
+    
+    function lightenColor(hex, percent) {
+        const num = parseInt(hex.slice(1), 16),
+              amt = Math.round(2.55 * percent),
+              R = (num >> 16) + amt,
+              G = (num >> 8 & 0x00FF) + amt,
+              B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
+                      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
+                      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+    
+    function darkenColor(hex, percent) {
+        const num = parseInt(hex.slice(1), 16),
+              amt = Math.round(2.55 * percent),
+              R = (num >> 16) - amt,
+              G = (num >> 8 & 0x00FF) - amt,
+              B = (num & 0x0000FF) - amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
+                      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
+                      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+    
     function updateBackgroundColor(imageUrl) {
         const img = new Image();
         img.crossOrigin = "Anonymous";
         img.src = imageUrl;
-
+    
         img.onload = function() {
             const vibrant = new Vibrant(img);
             const swatches = vibrant.swatches();
-
-            // Set the background to the Muted color
+    
             if (swatches.Muted) {
-                document.body.style.backgroundColor = swatches.Muted.getHex();
-            }
-
-            // Set text colors based on other swatches
-            if (swatches.Vibrant) {
-                document.getElementById("song-title").style.color = swatches.Vibrant.getHex();
-            }
-
-            if (swatches.DarkVibrant) {
-                document.getElementById("artist-name").style.color = swatches.DarkVibrant.getHex();
+                const backgroundColor = swatches.Muted.getHex();
+                document.body.style.backgroundColor = backgroundColor;
+    
+                // Adjust text colors based on the palette and background luminance
+                if (swatches.Vibrant) {
+                    const adjustedVibrant = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
+                    document.getElementById("song-title").style.color = adjustedVibrant;
+                }
+    
+                if (swatches.DarkVibrant) {
+                    const adjustedDarkVibrant = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
+                    document.getElementById("artist-name").style.color = adjustedDarkVibrant;
+                }
             }
         };
     }
