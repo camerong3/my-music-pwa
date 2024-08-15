@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Adjust the settings icon color based on the background color
             const settingsButton = document.getElementById("settings-button");
             if (settingsButton) {
-                const adjustedButtonColor = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor); // Base color can be changed
+                const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
                 settingsButton.style.color = adjustedButtonColor;
             }
         };
