@@ -3,6 +3,8 @@ body {
     text-align: center;
     background-color: #15202B;
     padding: 25px;
+    transition: background-color 1s ease;
+    
 }
 
 #app {

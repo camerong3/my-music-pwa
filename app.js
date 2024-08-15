@@ -19,6 +19,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return groupID;
     }
 
+    function updateTextColorBasedOnBackground(backgroundColor) {
+        const rgb = parseInt(backgroundColor.substring(1), 16); // Convert hex to RGB
+        const r = (rgb >> 16) & 0xff;
+        const g = (rgb >>  8) & 0xff;
+        const b = (rgb >>  0) & 0xff;
+        const luminance = 0.2126*r + 0.7152*g + 0.0722*b;
+    
+        const textColor = (luminance < 128) ? '#FFFFFF' : '#000000';
+        document.body.style.color = textColor;
+    }
+
+    function updateBackgroundColor(imageUrl) {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = imageUrl;
+
+        img.onload = function() {
+            const vibrant = new Vibrant(img);
+            const swatches = vibrant.swatches();
+            
+            // Choose a swatch (you can choose based on Vibrant, Muted, etc.)
+            let backgroundColor;
+            if (swatches.Vibrant) {
+                backgroundColor = swatches.Vibrant.getHex();
+            } else if (swatches.Muted) {
+                backgroundColor = swatches.Muted.getHex();
+            } else {
+                backgroundColor = "#15202B"; // Fallback color
+            }
+
+            document.body.style.backgroundColor = backgroundColor;
+            updateTextColorBasedOnBackground(backgroundColor);
+        }
+    }
+
     // Check if a group ID and leader flag are stored in localStorage
     const groupID = localStorage.getItem('spotifyGroupID');
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
@@ -33,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Display the current group ID on the home page
         const groupIDElement = document.createElement('p');
         groupIDElement.id = 'current-group-id';
-        groupIDElement.textContent = `Current Group ID: ${groupID}`;
+        groupIDElement.textContent = `Group ID: ${groupID}`;
         document.getElementById('app').appendChild(groupIDElement);
 
         // Update button text if the user is the leader
@@ -55,18 +90,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Set up Firebase listener for current song updates
-        const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
-        currentSongRef.on('value', (snapshot) => {
-            const songInfo = snapshot.val();
-            if (songInfo) {
-                document.getElementById('song-title').textContent = songInfo.title;
-                document.getElementById('artist-name').textContent = songInfo.artist;
-                document.getElementById('album-art').src = songInfo.albumArt;
-                document.getElementById('album-art').style.display = 'block';
-            } else {
-                console.log('No song is currently playing.');
-            }
-        });
+        function updateSong () {
+            const currentSongRef = firebase.database().ref('groups/' + groupID + '/currentSong');
+            currentSongRef.on('value', (snapshot) => {
+                const songInfo = snapshot.val();
+                if (songInfo) {
+                    document.getElementById('song-title').textContent = songInfo.title;
+                    document.getElementById('artist-name').textContent = songInfo.artist;
+                    document.getElementById('album-art').src = songInfo.albumArt;
+                    document.getElementById('album-art').style.display = 'block';
+
+                    // Update the background color based on the album art
+                    updateBackgroundColor(songInfo.albumArt);
+                } else {
+                    console.log('No song is currently playing.');
+                }
+            });
+        }
+
+        // Poll the current song every 5 seconds (adjust as needed)
+        setInterval(updateSong, 5000);
     } else {
         // No group is active, show create and join buttons
         createGroupButton.style.display = 'block';
@@ -387,29 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(err => console.error('Error fetching currently playing song:', err));
-        }
-    }
-    
-    function updateBackgroundColor(imageUrl) {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = imageUrl;
-
-        img.onload = function() {
-            const vibrant = new Vibrant(img);
-            const swatches = vibrant.swatches();
-            
-            // Choose a swatch (you can choose based on Vibrant, Muted, etc.)
-            let backgroundColor;
-            if (swatches.Vibrant) {
-                backgroundColor = swatches.Vibrant.getHex();
-            } else if (swatches.Muted) {
-                backgroundColor = swatches.Muted.getHex();
-            } else {
-                backgroundColor = "#15202B"; // Fallback color
-            }
-
-            document.body.style.backgroundColor = backgroundColor;
         }
     }
 
