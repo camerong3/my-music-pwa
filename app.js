@@ -76,23 +76,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const vibrant = new Vibrant(img);
             const swatches = vibrant.swatches();
     
+            let backgroundColor;
+    
             if (swatches.Muted) {
-                const backgroundColor = swatches.Muted.getHex();
-                document.body.style.backgroundColor = backgroundColor;
+                backgroundColor = swatches.Muted.getHex();
+            } else if (swatches.DarkMuted) {
+                backgroundColor = swatches.DarkMuted.getHex();
+            } else if (swatches.Vibrant) {
+                backgroundColor = swatches.Vibrant.getHex();
+            } else {
+                backgroundColor = "#f0f0f0"; // Default fallback color
+            }
     
-                // Adjust text colors based on the palette and background luminance
-                if (swatches.Vibrant) {
-                    const adjustedVibrant = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
-                    document.getElementById("song-title").style.color = adjustedVibrant;
-                }
+            // Apply the background color and adjust text colors
+            document.body.style.backgroundColor = backgroundColor;
+            adjustTextColorBasedOnBackground(backgroundColor);
     
-                if (swatches.DarkVibrant) {
-                    const adjustedDarkVibrant = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
-                    document.getElementById("artist-name").style.color = adjustedDarkVibrant;
-                }
+            // Apply color palette to text elements
+            if (swatches.Vibrant) {
+                document.getElementById("song-title").style.color = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
+            }
+    
+            if (swatches.DarkVibrant) {
+                document.getElementById("artist-name").style.color = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
             }
         };
     }
+    
 
     // Update song information in the UI and adjust colors
     function updateSongUI(songInfo) {
