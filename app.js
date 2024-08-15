@@ -390,11 +390,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    function updateBackgroundColor(imageUrl) {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = imageUrl;
+
+        img.onload = function() {
+            const vibrant = new Vibrant(img);
+            const swatches = vibrant.swatches();
+            
+            // Choose a swatch (you can choose based on Vibrant, Muted, etc.)
+            let backgroundColor;
+            if (swatches.Vibrant) {
+                backgroundColor = swatches.Vibrant.getHex();
+            } else if (swatches.Muted) {
+                backgroundColor = swatches.Muted.getHex();
+            } else {
+                backgroundColor = "#15202B"; // Fallback color
+            }
+
+            document.body.style.backgroundColor = backgroundColor;
+        }
+    }
+
     function updateSongUI(songInfo) {
         document.getElementById("song-title").textContent = songInfo.title;
         document.getElementById("artist-name").textContent = songInfo.artist;
         document.getElementById("album-art").src = songInfo.albumArt;
         document.getElementById("album-art").style.display = 'block';
+
+        // Update the background color based on the album art
+        updateBackgroundColor(songInfo.albumArt);
     }
     
     // Poll the current song every 5 seconds (adjust as needed)

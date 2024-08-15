@@ -6,7 +6,7 @@ body {
 }
 
 #app {
-    background: #121212;
+    background: #d3d3d319;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -103,8 +103,8 @@ button:hover {
 #song-title {
     font-size: 24px;
     font-weight: bold;
-    color: #FFFFFF
     margin: 8px 0;
+    color: #FFFFFF
 }
 
 #artist-name {
@@ -119,19 +119,34 @@ button:hover {
     margin-top: 10px;
 }
 
-#vote-keep, #vote-skip {
+#vote-keep {
     padding: 10px 20px;
     font-size: 16px;
-    margin: 5px;
+    margin: 10px;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #207f1e;
     color: white;
     border: none;
     cursor: pointer;
 }
 
-#vote-keep:hover, #vote-skip:hover {
-    background-color: #0056b3;
+#vote-skip {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color: #ce2828;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#vote-keep:hover {
+    background-color: #2e982c;
+}
+
+#vote-skip:hover {
+    background-color: #ca4747;
 }
 
 #logout-spotify {
