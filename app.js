@@ -75,28 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
         img.onload = function() {
             const vibrant = new Vibrant(img);
             const swatches = vibrant.swatches();
-    
-            let backgroundColor;
-    
-            if (swatches.Muted && !isColorTooBright(swatches.Muted.getHex())) {
+
+            if (swatches.Muted) {
                 backgroundColor = swatches.Muted.getHex();
             } else if (swatches.DarkMuted) {
                 backgroundColor = swatches.DarkMuted.getHex();
-            } else if (swatches.Vibrant && !isColorTooBright(swatches.Vibrant.getHex())) {
+            } else if (swatches.Vibrant) {
                 backgroundColor = swatches.Vibrant.getHex();
             } else {
                 backgroundColor = "#f0f0f0"; // Default fallback color
             }
-    
-            // Apply the background color
+            
             document.body.style.backgroundColor = backgroundColor;
-    
-            // Adjust and apply text colors based on the palette and background luminance
+
+            // Adjust text colors based on the palette and background luminance
             if (swatches.Vibrant) {
                 const adjustedVibrant = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
                 document.getElementById("song-title").style.color = adjustedVibrant;
             }
-    
+
             if (swatches.DarkVibrant) {
                 const adjustedDarkVibrant = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
                 document.getElementById("artist-name").style.color = adjustedDarkVibrant;
