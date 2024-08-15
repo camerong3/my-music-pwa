@@ -78,31 +78,31 @@ document.addEventListener('DOMContentLoaded', () => {
     
             let backgroundColor;
     
-            if (swatches.Muted) {
+            if (swatches.Muted && !isColorTooBright(swatches.Muted.getHex())) {
                 backgroundColor = swatches.Muted.getHex();
             } else if (swatches.DarkMuted) {
                 backgroundColor = swatches.DarkMuted.getHex();
-            } else if (swatches.Vibrant) {
+            } else if (swatches.Vibrant && !isColorTooBright(swatches.Vibrant.getHex())) {
                 backgroundColor = swatches.Vibrant.getHex();
             } else {
                 backgroundColor = "#f0f0f0"; // Default fallback color
             }
     
-            // Apply the background color and adjust text colors
+            // Apply the background color
             document.body.style.backgroundColor = backgroundColor;
-            adjustTextColorBasedOnBackground(backgroundColor);
     
-            // Apply color palette to text elements
+            // Adjust and apply text colors based on the palette and background luminance
             if (swatches.Vibrant) {
-                document.getElementById("song-title").style.color = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
+                const adjustedVibrant = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor);
+                document.getElementById("song-title").style.color = adjustedVibrant;
             }
     
             if (swatches.DarkVibrant) {
-                document.getElementById("artist-name").style.color = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
+                const adjustedDarkVibrant = adjustTextColorForContrast(swatches.DarkVibrant.getHex(), backgroundColor);
+                document.getElementById("artist-name").style.color = adjustedDarkVibrant;
             }
         };
     }
-    
 
     // Update song information in the UI and adjust colors
     function updateSongUI(songInfo) {
