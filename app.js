@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('The group session has ended. You will be removed from the group.');
                 localStorage.removeItem('spotifyGroupID');
                 localStorage.removeItem('isGroupLeader');
-                // window.location.reload(); // Reload the page to update UI
+                window.location.reload(); // Reload the page to update UI
                 return;
             }
         });
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Reload the page to update UI
-            // window.location.reload();
+            window.location.reload();
         });
 
         // Handle showing the group ID input and join button
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             localStorage.setItem('spotifyGroupID', enteredGroupID);
                             localStorage.removeItem('isGroupLeader'); // Ensure the user is not marked as leader
                             // Reload the page to update UI
-                            // window.location.reload();
+                            window.location.reload();
                         }).catch(err => {
                             console.error('Error incrementing listener count:', err);
                         });
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear the group data from localStorage
         localStorage.removeItem('spotifyGroupID');
         localStorage.removeItem('isGroupLeader');
-        // window.location.reload(); // Reload the page to update UI
+        window.location.reload(); // Reload the page to update UI
     });
 
     // Set the initial song title
