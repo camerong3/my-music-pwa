@@ -27,6 +27,15 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
+    <div id="top-bar">
+        <!-- Group ID and Settings Button -->
+        <div id="group-id-container">
+            <p id="current-group-id"></p>
+        </div>
+        <span id="spotify-status-dot"></span>
+        <i id="settings-button" class="fas fa-cog"></i> <!-- Settings icon -->
+    </div>
+
    <!-- Album Art -->
     <div id="album-art-container">
         <img id="album-art" src="" alt="Album Art">
@@ -40,8 +49,8 @@
     <div id="app">
         <!-- Voting Buttons -->
         <div class="poll">
-            <button id="vote-keep">Keep Playing</button>
-            <button id="vote-skip">Skip Song</button>
+            <i id="vote-keep" class="fas fa-thumbs-up"></i>
+            <i id="vote-skip" class="fas fa-thumbs-down"></i>
         </div>
     
         <p id="vote-status"></p>
@@ -55,12 +64,6 @@
 
         <!-- Leave Group Button -->
         <button id="leave-group" style="display:none;">Leave Group</button>
-    
-        <!-- Spotify Status Indicator and Settings Button -->
-        <div id="spotify-status-container">
-            <span id="spotify-status-dot"></span>
-            <i id="settings-button" class="fas fa-cog"></i> <!-- Settings icon -->
-        </div>
     </div>
 
     <!-- Firebase initialization and custom scripts -->

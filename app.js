@@ -105,6 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
                 settingsButton.style.color = adjustedButtonColor;
             }
+            
+            // Define the base colors for keep and skip
+            const baseKeepColor = "#00FF00"; // Green for keep
+            const baseSkipColor = "#FF0000"; // Red for skip
+            
+            // Adjust the icon color based on the background color
+            const keepButton = document.getElementById("vote-keep");
+            const skipButton = document.getElementById("vote-skip");
+            if (keepButton && skipButton) {
+                const adjustedKeepColor = adjustColorForContrast(baseKeepColor, backgroundColor);
+                const adjustedSkipColor = adjustColorForContrast(baseSkipColor, backgroundColor);
+        
+                keepButton.style.color = adjustedKeepColor;
+                skipButton.style.color = adjustedSkipColor;
         };
     }
 

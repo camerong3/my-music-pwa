@@ -119,25 +119,23 @@ button:hover {
 }
 
 #vote-keep {
-    padding: 10px 20px;
-    font-size: 16px;
-    margin: 10px;
-    border-radius: 5px;
-    background-color: #207f1e;
-    color: white;
-    border: none;
+    background: none;   /* Remove background */
+    border: none;       /* Remove border */
+    padding: 0;         /* Remove padding */
+    margin-right: 20px;       /* Optional: space between the buttons */
+    font-size: 30px;    /* Adjust the size of the icon */
     cursor: pointer;
+    color: #207f1e;        /* Set the icon color */
 }
 
 #vote-skip {
-    padding: 10px 20px;
-    font-size: 16px;
-    margin: 10px;
-    border-radius: 5px;
-    background-color: #ce2828;
-    color: white;
-    border: none;
+    background: none;   /* Remove background */
+    border: none;       /* Remove border */
+    padding: 0;         /* Remove padding */
+    margin-left: 20px;       /* Optional: space between the buttons */
+    font-size: 30px;    /* Adjust the size of the icon */
     cursor: pointer;
+    color: #ce2828;        /* Set the icon color */
 }
 
 #vote-keep:hover {
@@ -181,4 +179,25 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+
+#top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+#group-id-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#current-group-id {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
 }
