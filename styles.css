@@ -54,6 +54,7 @@ button:hover {
 }
 
 #settings-button {
+    margin-right: 10px;
     font-size: 24px; /* Adjust the size of the icon */
     color: #007bff; /* Icon color */
     cursor: pointer;
@@ -168,8 +169,9 @@ button:hover {
 
 #group-id-input {
     margin-left: 10px;
+    max-width: 100px;
     padding: 5px;
-    font-size: 14px;
+    font-size: 22px;
     display: none;
 }
 
