@@ -203,9 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
             groupIDElement.id = 'current-group-id';
             groupIDElement.textContent = `${groupID}`;
             document.getElementById('current-group-id').appendChild(groupIDElement);
-        } else {
-            groupIDElement.textContent = 'No Group ID';
-            document.getElementById('current-group-id').appendChild(groupIDElement);
         }
 
         // Update button text if the user is the leader
@@ -231,6 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
         joinGroupButton.style.display = 'block';
         leaveGroupButton.style.display = 'none';
         groupIDInput.style.display = 'none';
+
+        // Display no group ID on the home page
+        const groupIDElement = document.createElement('p');
+        if (groupIDElement) {
+            groupIDElement.textContent = 'No Group ID';
+            document.getElementById('current-group-id').appendChild(groupIDElement);
+        }
 
         // Handle group creation
         createGroupButton.addEventListener('click', () => {
