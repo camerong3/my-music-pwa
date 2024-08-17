@@ -40,32 +40,40 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Spotify logout button not found');
     }
 
-    function getAppVersion() {
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            return new Promise((resolve, reject) => {
-                const messageChannel = new MessageChannel();
-                messageChannel.port1.onmessage = event => {
-                    if (event.data && event.data.version) {
-                        resolve(event.data.version);
-                    } else {
-                        reject('No version found');
-                    }
-                };
-                navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' }, [messageChannel.port2]);
-            });
-        } else {
-            return Promise.reject('Service worker not supported or not registered');
-        }
-    }
-    
-    // Example usage:
     document.addEventListener('DOMContentLoaded', () => {
-        const versionElement = document.getElementById('app-version');
-        if (versionElement) {
-            getAppVersion().then(version => {
-                versionElement.textContent = `Version: ${version}`;
-            }).catch(err => {
-                console.error('Failed to get version:', err);
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                console.log('Service Worker is controlling the settings page:', registration);
+                // You can now safely interact with the service worker
+                function getAppVersion() {
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        return new Promise((resolve, reject) => {
+                            const messageChannel = new MessageChannel();
+                            messageChannel.port1.onmessage = event => {
+                                if (event.data && event.data.version) {
+                                    resolve(event.data.version);
+                                } else {
+                                    reject('No version found');
+                                }
+                            };
+                            navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' }, [messageChannel.port2]);
+                        });
+                    } else {
+                        return Promise.reject('Service worker not supported or not registered');
+                    }
+                }
+                
+                // Example usage:
+                document.addEventListener('DOMContentLoaded', () => {
+                    const versionElement = document.getElementById('app-version');
+                    if (versionElement) {
+                        getAppVersion().then(version => {
+                            versionElement.textContent = `Version: ${version}`;
+                        }).catch(err => {
+                            console.error('Failed to get version:', err);
+                        });
+                    }
+                });
             });
         }
     });
