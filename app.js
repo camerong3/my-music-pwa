@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const keepButton = document.getElementById("vote-keep");
             const skipButton = document.getElementById("vote-skip");
             if (keepButton && skipButton) {
-                const adjustedIconColor = adjustTextColorForContrast(swatches.Vibrant.getHex(), backgroundColor); // You can use the same color for both icons
+                const adjustedIconColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // You can use the same color for both icons
                 keepButton.style.color = adjustedIconColor;
                 skipButton.style.color = adjustedIconColor;
             }
