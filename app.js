@@ -101,9 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Adjust the settings icon color based on the background color
             const settingsButton = document.getElementById("settings-button");
+            const groupButton = document.getElementById("group-buttons");
             if (settingsButton) {
                 const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
                 settingsButton.style.color = adjustedButtonColor;
+            }
+            if (groupButton) {
+                const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
+                groupButton.style.color = adjustedButtonColor;
             }
             
             // Define the base colors for keep and skip

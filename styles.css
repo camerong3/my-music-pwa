@@ -18,9 +18,10 @@ body {
 
 button {
     padding: 10px 20px;
-    margin: 10px;
+    margin: 5px;
+    margin-bottom: 10px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
 }
@@ -40,13 +41,14 @@ button:hover {
     right: 20px;
     display: flex;
     align-items: center;
+    margin: 0px;
 }
 
 #spotify-status-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 20px;
     background-color: red; /* Default to red (not linked) */
 }
 
