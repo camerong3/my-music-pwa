@@ -202,10 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (groupID && groupIDElement) {
             groupIDElement.id = 'current-group-id';
             groupIDElement.textContent = `${groupID}`;
-            document.getElementById('current-group-id').replaceChild(groupIDElement);
+            document.getElementById('current-group-id').appendChild(groupIDElement);
         } else {
             groupIDElement.textContent = 'No Group ID';
-            document.getElementById('current-group-id').replaceChild(groupIDElement);
+            document.getElementById('current-group-id').appendChild(groupIDElement);
         }
 
         // Update button text if the user is the leader
