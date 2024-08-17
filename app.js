@@ -190,14 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupID = localStorage.getItem('spotifyGroupID');
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
-    // Set the initial text of the group ID container
-    const groupIDElement = document.getElementById('current-group-id');
-    if (groupID && groupIDElement) {
-        groupIDElement.textContent = `${groupID}`;
-    } else {
-        groupIDElement.textContent = 'No Group ID';
-    }
-
     if (groupID) {
         // A group is active, show the leave/end button only
         createGroupButton.style.display = 'none';
