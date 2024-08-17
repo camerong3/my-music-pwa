@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #15202B;
+    background-color: #f0f0f0;
     padding: 10px;
     transition: background-color 1s ease;
     
@@ -24,6 +24,7 @@ button {
     border-radius: 20px;
     border: none;
     cursor: pointer;
+    background-color: #d3d3d3
 }
 
 button:hover {
@@ -37,7 +38,7 @@ button:hover {
 
 #spotify-status-container {
     position: absolute;
-    top: 5px;
+    bottom: 20px;
     right: 20px;
     display: flex;
     align-items: center;
@@ -101,12 +102,12 @@ button:hover {
     font-size: 24px;
     font-weight: bold;
     margin: 8px 0;
-    color: #FFFFFF
+    color: #000000
 }
 
 #artist-name {
     font-size: 18px;
-    color: #D9D9D9;
+    color: #4e4e4e;
     margin: 0;
 }
 
