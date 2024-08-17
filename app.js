@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Display the current group ID on the home page
         const groupIDElement = document.createElement('p');
         groupIDElement.id = 'current-group-id';
-        groupIDElement.textContent = `Group ID: ${groupID}`;
+        groupIDElement.textContent = `${groupID}`;
         document.getElementById('current-group-id').appendChild(groupIDElement);
 
         // Update button text if the user is the leader
