@@ -99,16 +99,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("artist-name").style.color = adjustedDarkVibrant;
             }
 
-            // Adjust the settings icon color based on the background color
+            // Adjust the color based on the background color
             const settingsButton = document.getElementById("settings-button");
-            const groupButton = document.getElementById("group-buttons");
             if (settingsButton) {
                 const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
                 settingsButton.style.color = adjustedButtonColor;
             }
+            const groupButton = document.getElementById("group-buttons");
             if (groupButton) {
                 const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
                 groupButton.style.color = adjustedButtonColor;
+            }
+            const groupIDText = document.getElementById("current-group-id");
+            if (groupIDText) {
+                const adjustedButtonColor = adjustTextColorForContrast(swatches.Muted.getHex(), backgroundColor); // Base color can be changed
+                groupIDText.style.color = adjustedButtonColor;
             }
             
             // Define the base colors for keep and skip
@@ -509,9 +514,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register the service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/my-music-pwa/sw.js').then(registration => {
+            navigator.serviceWorker.register('/my-music-pwa/sw.js')
+            .then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(error => {
+    
+                // Check for updates to the service worker
+                registration.onupdatefound = () => {
+                    const installingWorker = registration.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // New update available
+                                console.log('New content is available; please refresh.');
+                                // Optionally prompt the user to refresh
+                                if (confirm('New version available. Refresh to update?')) {
+                                    window.location.reload();
+                                }
+                            } else {
+                                // Content is cached for offline use
+                                console.log('Content is cached for offline use.');
+                            }
+                        }
+                    };
+                };
+            })
+            .catch(error => {
                 console.log('Service Worker registration failed:', error);
             });
         });

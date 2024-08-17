@@ -40,6 +40,36 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Spotify logout button not found');
     }
 
+    function getAppVersion() {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            return new Promise((resolve, reject) => {
+                const messageChannel = new MessageChannel();
+                messageChannel.port1.onmessage = event => {
+                    if (event.data && event.data.version) {
+                        resolve(event.data.version);
+                    } else {
+                        reject('No version found');
+                    }
+                };
+                navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' }, [messageChannel.port2]);
+            });
+        } else {
+            return Promise.reject('Service worker not supported or not registered');
+        }
+    }
+    
+    // Example usage:
+    document.addEventListener('DOMContentLoaded', () => {
+        const versionElement = document.getElementById('app-version');
+        if (versionElement) {
+            getAppVersion().then(version => {
+                versionElement.textContent = `Version: ${version}`;
+            }).catch(err => {
+                console.error('Failed to get version:', err);
+            });
+        }
+    });
+    
     // Fetch and display user info if the token is available
     const token = localStorage.getItem('spotifyAccessToken');
     if (token) {
