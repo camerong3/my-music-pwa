@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #15202B;
-    padding: 25px;
+    padding: 10px;
     transition: background-color 1s ease;
     
 }
@@ -10,10 +10,10 @@ body {
 #app {
     background: #d3d3d319;
     padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    max-width: 1170px;
+    margin: 0px;
 }
 
 button {
