@@ -190,6 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupID = localStorage.getItem('spotifyGroupID');
     const isLeader = localStorage.getItem('isGroupLeader') === 'true';
 
+    // Set the initial text of the group ID container
+    const groupIDElement = document.getElementById('current-group-id');
+    if (groupID && groupIDElement) {
+        groupIDElement.textContent = `${groupID}`;
+    } else {
+        groupIDElement.textContent = 'No Group ID';
+    }
+
     if (groupID) {
         // A group is active, show the leave/end button only
         createGroupButton.style.display = 'none';
@@ -199,9 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Display the current group ID on the home page
         const groupIDElement = document.createElement('p');
-        groupIDElement.id = 'current-group-id';
-        groupIDElement.textContent = `${groupID}`;
-        document.getElementById('current-group-id').appendChild(groupIDElement);
+        if (groupID && groupIDElement) {
+            groupIDElement.id = 'current-group-id';
+            groupIDElement.textContent = `${groupID}`;
+            document.getElementById('current-group-id').appendChild(groupIDElement);
+        } else {
+            groupIDElement.textContent = 'No Group ID';
+            document.getElementById('current-group-id').appendChild(groupIDElement);
+        }
 
         // Update button text if the user is the leader
         if (isLeader) {
