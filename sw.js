@@ -3,7 +3,9 @@ const urlsToCache = [
     '/',
     '/index.html',
     '/styles.css',
-    '/app.js'
+    '/app.js',
+    '/settings.html',  // Include settings page
+    '/settings.js'     // Include settings script
 ];
 
 // Install event
