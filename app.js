@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const groupIDElement = document.createElement('p');
         groupIDElement.id = 'current-group-id';
         groupIDElement.textContent = `Group ID: ${groupID}`;
-        document.getElementById('app').appendChild(groupIDElement);
+        document.getElementById('current-group-id').appendChild(groupIDElement);
 
         // Update button text if the user is the leader
         if (isLeader) {

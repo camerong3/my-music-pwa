@@ -79,8 +79,7 @@ button:hover {
 
 /* Updated Styles */
 #album-art-container {
-    top: 60px;
-    margin-top: 10px;
+    margin-top: 20px;
     text-align: center;
     width: 100%;
 }
@@ -186,7 +185,7 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 0px    0px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 #group-id-container {
