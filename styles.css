@@ -212,3 +212,9 @@ button {
     color: #007bff; /* Icon color */
     cursor: pointer;
 }
+
+#app-version {
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: center;
+}
