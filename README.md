@@ -1,5 +1,5 @@
 # my-music-pwa
-How to install app:
+Installation:
 1. Open Safari
 2. Navigate to - https://camerong3.github.io/my-music-pwa
 3. Click Share Button
